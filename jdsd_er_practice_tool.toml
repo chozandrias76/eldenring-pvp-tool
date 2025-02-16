@@ -60,15 +60,15 @@ log_level = "INFO"
 display = "0"
 hide = "rshift+0"
 dxgi_debug = false
-show_console = false
+show_console = true
 radial_menu_open = "l3+r3"
 indicators = [
-  { indicator = "game_version", enabled = true },
-  { indicator = "igt", enabled = true },
-  { indicator = "position", enabled = false },
-  { indicator = "position_change", enabled = false },
-  { indicator = "animation", enabled = false },
-  { indicator = "fps", enabled = false },
-  { indicator = "framecount", enabled = false },
-  { indicator = "imgui_debug", enabled = false }
+  { indicator = "game_version", default = false, visible = true },
+  { indicator = "igt", default = false, visible = false },
+  { indicator = "position", default = false, visible = true },
+  { indicator = "position_change", default = false, visible = false },
+  { indicator = "animation", default = false, visible = false },
+  { indicator = "fps", default = true, visible = true },
+  { indicator = "framecount", default = false, visible = false },
+  { indicator = "imgui_debug", default = false, visible = false }
 ]

@@ -341,10 +341,11 @@ impl PracticeTool {
                                 IndicatorType::ImguiDebug => "ImGui Debug Info",
                             };
 
-                            let mut state = indicator.enabled;
-
-                            if ui.checkbox(label, &mut state) {
-                                indicator.enabled = state;
+                            let mut state = indicator.default;
+                            if indicator.visible {
+                                if ui.checkbox(label, &mut state) {
+                                    indicator.default = state;
+                                }
                             }
 
                             if let IndicatorType::FrameCount = indicator.indicator {
@@ -413,10 +414,10 @@ impl PracticeTool {
                     .build(|| {
                         self.pointers.cursor_show.set(true);
                         ui.text(formatcp!(
-                            "Elden Ring Practice Tool v{}.{}.{}",
-                            MAJOR,
-                            MINOR,
-                            PATCH
+                            "Elden Ring Practice Tool v{major}.{minor}.{patch}",
+                            major = MAJOR,
+                            minor = MINOR,
+                            patch = PATCH
                         ));
                         ui.separator();
                         ui.text(format!(
@@ -486,7 +487,7 @@ impl PracticeTool {
                 ui.new_line();
 
                 for indicator in &self.settings.indicators {
-                    if !indicator.enabled {
+                    if !indicator.default {
                         continue;
                     }
 

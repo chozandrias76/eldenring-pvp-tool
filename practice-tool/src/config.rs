@@ -73,20 +73,21 @@ pub(crate) enum IndicatorType {
 #[serde(try_from = "IndicatorConfig")]
 pub(crate) struct Indicator {
     pub(crate) indicator: IndicatorType,
-    pub(crate) enabled: bool,
+    pub(crate) default: bool,
+    pub(crate) visible: bool,
 }
 
 impl Indicator {
     fn default_set() -> Vec<Indicator> {
         vec![
-            Indicator { indicator: IndicatorType::GameVersion, enabled: true },
-            Indicator { indicator: IndicatorType::Igt, enabled: true },
-            Indicator { indicator: IndicatorType::Position, enabled: false },
-            Indicator { indicator: IndicatorType::PositionChange, enabled: false },
-            Indicator { indicator: IndicatorType::Animation, enabled: false },
-            Indicator { indicator: IndicatorType::Fps, enabled: false },
-            Indicator { indicator: IndicatorType::FrameCount, enabled: false },
-            Indicator { indicator: IndicatorType::ImguiDebug, enabled: false },
+            Indicator { indicator: IndicatorType::GameVersion, default: true, visible: false },
+            Indicator { indicator: IndicatorType::Igt, default: true, visible: false  },
+            Indicator { indicator: IndicatorType::Position, default: false, visible: false  },
+            Indicator { indicator: IndicatorType::PositionChange, default: false, visible: false  },
+            Indicator { indicator: IndicatorType::Animation, default: false, visible: false  },
+            Indicator { indicator: IndicatorType::Fps, default: false, visible: true  },
+            Indicator { indicator: IndicatorType::FrameCount, default: false, visible: true  },
+            Indicator { indicator: IndicatorType::ImguiDebug, default: false, visible: false  },
         ]
     }
 }
@@ -94,7 +95,8 @@ impl Indicator {
 #[derive(Debug, Deserialize, Clone)]
 struct IndicatorConfig {
     indicator: String,
-    enabled: bool,
+    default: bool,
+    visible: bool,
 }
 
 impl TryFrom<IndicatorConfig> for Indicator {
@@ -102,26 +104,27 @@ impl TryFrom<IndicatorConfig> for Indicator {
 
     fn try_from(indicator: IndicatorConfig) -> Result<Self, Self::Error> {
         match indicator.indicator.as_str() {
-            "igt" => Ok(Indicator { indicator: IndicatorType::Igt, enabled: indicator.enabled }),
+            "igt" => Ok(Indicator { indicator: IndicatorType::Igt, default: indicator.default, visible: indicator.visible }),
             "position" => {
-                Ok(Indicator { indicator: IndicatorType::Position, enabled: indicator.enabled })
+                Ok(Indicator { indicator: IndicatorType::Position, default: indicator.default, visible: indicator.visible })
             },
             "position_change" => Ok(Indicator {
                 indicator: IndicatorType::PositionChange,
-                enabled: indicator.enabled,
+                default: indicator.default, visible: indicator.visible
+                
             }),
             "animation" => {
-                Ok(Indicator { indicator: IndicatorType::Animation, enabled: indicator.enabled })
+                Ok(Indicator { indicator: IndicatorType::Animation, default: indicator.default, visible: indicator.visible })
             },
             "game_version" => {
-                Ok(Indicator { indicator: IndicatorType::GameVersion, enabled: indicator.enabled })
+                Ok(Indicator { indicator: IndicatorType::GameVersion, default: indicator.default, visible: indicator.visible })
             },
-            "fps" => Ok(Indicator { indicator: IndicatorType::Fps, enabled: indicator.enabled }),
+            "fps" => Ok(Indicator { indicator: IndicatorType::Fps, default: indicator.default, visible: indicator.visible }),
             "framecount" => {
-                Ok(Indicator { indicator: IndicatorType::FrameCount, enabled: indicator.enabled })
+                Ok(Indicator { indicator: IndicatorType::FrameCount, default: indicator.default, visible: indicator.visible })
             },
             "imgui_debug" => {
-                Ok(Indicator { indicator: IndicatorType::ImguiDebug, enabled: indicator.enabled })
+                Ok(Indicator { indicator: IndicatorType::ImguiDebug, default: indicator.default, visible: indicator.visible })
             },
             value => Err(format!("Unrecognized indicator: {value}")),
         }
