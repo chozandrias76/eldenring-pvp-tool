@@ -8,6 +8,7 @@ pub(crate) mod group;
 pub(crate) mod item_spawn;
 pub(crate) mod label;
 pub(crate) mod multiflag;
+pub(crate) mod none;
 pub(crate) mod nudge_pos;
 pub(crate) mod position;
 pub(crate) mod quitout;

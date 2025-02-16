@@ -1,3 +1,4 @@
+use std::collections::HashSet;
 use std::str::FromStr;
 
 use hudhook::tracing::error;
@@ -18,6 +19,7 @@ use crate::widgets::group::group;
 use crate::widgets::item_spawn::ItemSpawner;
 use crate::widgets::label::label_widget;
 use crate::widgets::multiflag::multi_flag;
+use crate::widgets::none::NoneWidget;
 use crate::widgets::nudge_pos::nudge_position;
 use crate::widgets::position::save_position;
 use crate::widgets::quitout::quitout;
@@ -48,6 +50,8 @@ pub(crate) struct Settings {
     pub(crate) disable_update_prompt: bool,
     #[serde(default = "Indicator::default_set")]
     pub(crate) indicators: Vec<Indicator>,
+    #[serde(default = "Feature::default_set")]
+    pub(crate) features: Vec<Feature>,
     pub(crate) radial_menu_open: Option<ControllerCombination>,
 }
 
@@ -77,18 +81,231 @@ pub(crate) struct Indicator {
     pub(crate) visible: bool,
 }
 
+#[derive(Debug, Deserialize, Clone, PartialEq)]
+#[serde(try_from = "FeatureConfig")]
+pub(crate) struct Feature {
+    pub(crate) flag: Option<String>,
+    pub(crate) flags: Option<Vec<String>>,
+    pub(crate) default: bool,
+    pub(crate) visible: bool,
+}
+
 impl Indicator {
     fn default_set() -> Vec<Indicator> {
         vec![
             Indicator { indicator: IndicatorType::GameVersion, default: true, visible: false },
-            Indicator { indicator: IndicatorType::Igt, default: true, visible: false  },
-            Indicator { indicator: IndicatorType::Position, default: false, visible: false  },
-            Indicator { indicator: IndicatorType::PositionChange, default: false, visible: false  },
-            Indicator { indicator: IndicatorType::Animation, default: false, visible: false  },
-            Indicator { indicator: IndicatorType::Fps, default: false, visible: true  },
-            Indicator { indicator: IndicatorType::FrameCount, default: false, visible: true  },
-            Indicator { indicator: IndicatorType::ImguiDebug, default: false, visible: false  },
+            Indicator { indicator: IndicatorType::Igt, default: true, visible: false },
+            Indicator { indicator: IndicatorType::Position, default: false, visible: false },
+            Indicator { indicator: IndicatorType::PositionChange, default: false, visible: false },
+            Indicator { indicator: IndicatorType::Animation, default: false, visible: false },
+            Indicator { indicator: IndicatorType::Fps, default: false, visible: true },
+            Indicator { indicator: IndicatorType::FrameCount, default: false, visible: true },
+            Indicator { indicator: IndicatorType::ImguiDebug, default: false, visible: false },
         ]
+    }
+}
+
+impl Feature {
+    fn default_set() -> Vec<Feature> {
+        vec![
+            Feature {
+                flag: Some("show_all_map_layers".to_string()),
+                flags: None,
+                default: false,
+                visible: false,
+            },
+            Feature {
+                flag: None,
+                flags: Some(vec!["show_all_graces".to_string(), "show_all_map_layers".to_string()]),
+                default: false,
+                visible: false,
+            },
+            Feature {
+                flag: Some("show_map".to_string()),
+                flags: None,
+                default: false,
+                visible: false,
+            },
+            Feature {
+                flag: Some("show_chr".to_string()),
+                flags: None,
+                default: false,
+                visible: true,
+            },
+            Feature {
+                flag: Some("display_stable_pos".to_string()),
+                flags: None,
+                default: false,
+                visible: false,
+            },
+            Feature {
+                flag: Some("hitbox_high".to_string()),
+                flags: None,
+                default: false,
+                visible: true,
+            },
+            Feature {
+                flag: Some("hitbox_low".to_string()),
+                flags: None,
+                default: false,
+                visible: true,
+            },
+            Feature {
+                flag: Some("hitbox_f".to_string()),
+                flags: None,
+                default: false,
+                visible: true,
+            },
+            Feature {
+                flag: Some("hitbox_character".to_string()),
+                flags: None,
+                default: false,
+                visible: true,
+            },
+            Feature {
+                flag: Some("hitbox_event".to_string()),
+                flags: None,
+                default: false,
+                visible: true,
+            },
+            Feature {
+                flag: None,
+                flags: Some(vec![
+                    "weapon_hitbox1".to_string(),
+                    "weapon_hitbox2".to_string(),
+                    "weapon_hitbox3".to_string(),
+                ]),
+                default: false,
+                visible: true,
+            },
+            Feature {
+                flag: Some("no_damage".to_string()),
+                flags: None,
+                default: false,
+                visible: false,
+            },
+            Feature {
+                flag: Some("no_stamina_consume".to_string()),
+                flags: None,
+                default: false,
+                visible: false,
+            },
+            Feature {
+                flag: None,
+                flags: Some(vec![
+                    "no_fp_consume".to_string(),
+                    "no_ashes_of_war_fp_consume".to_string(),
+                ]),
+                default: false,
+                visible: false,
+            },
+            Feature {
+                flag: None,
+                flags: Some(vec!["no_goods_consume".to_string(), "no_arrows_consume".to_string()]),
+                default: false,
+                visible: false,
+            },
+            Feature {
+                flag: Some("deathcam".to_string()),
+                flags: None,
+                default: false,
+                visible: false,
+            },
+            Feature {
+                flag: Some("no_dead".to_string()),
+                flags: None,
+                default: false,
+                visible: false,
+            },
+            Feature {
+                flag: Some("one_shot".to_string()),
+                flags: None,
+                default: false,
+                visible: false,
+            },
+            Feature {
+                flag: Some("runearc".to_string()),
+                flags: None,
+                default: false,
+                visible: true,
+            },
+            Feature {
+                flag: None,
+                flags: Some(vec![
+                    "field_area_direction".to_string(),
+                    "field_area_altimeter".to_string(),
+                    "field_area_compass".to_string(),
+                ]),
+                default: false,
+                visible: false,
+            },
+            Feature {
+                flag: Some("no_update_ai".to_string()),
+                flags: None,
+                default: false,
+                visible: false,
+            },
+            Feature {
+                flag: Some("no_trigger_event".to_string()),
+                flags: None,
+                default: false,
+                visible: false,
+            },
+            Feature {
+                flag: Some("gravity".to_string()),
+                flags: None,
+                default: false,
+                visible: false,
+            },
+            Feature {
+                flag: Some("torrent_gravity".to_string()),
+                flags: None,
+                default: false,
+                visible: false,
+            },
+            Feature {
+                flag: None,
+                flags: Some(vec!["collision".to_string(), "torrent_collision".to_string()]),
+                default: false,
+                visible: false,
+            },
+            Feature {
+                flag: Some("action_freeze".to_string()),
+                flags: None,
+                default: false,
+                visible: false,
+            },
+        ]
+    }
+}
+
+#[derive(Debug, Deserialize, Clone)]
+struct FeatureConfig {
+    flags: Option<Vec<String>>,
+    flag: Option<String>,
+    default: bool,
+    visible: bool,
+}
+
+impl TryFrom<FeatureConfig> for Feature {
+    type Error = String;
+
+    fn try_from(feature: FeatureConfig) -> Result<Self, Self::Error> {
+        match (feature.flag, feature.flags) {
+            (Some(flag), None) => Ok(Feature {
+                flag: Some(flag),
+                flags: None,
+                default: feature.default,
+                visible: feature.visible,
+            }),
+            (None, Some(flags)) => Ok(Feature {
+                flag: None,
+                flags: Some(flags),
+                default: feature.default,
+                visible: feature.visible,
+            }),
+            _ => Err("Invalid feature config".to_string()),
+        }
     }
 }
 
@@ -104,28 +321,46 @@ impl TryFrom<IndicatorConfig> for Indicator {
 
     fn try_from(indicator: IndicatorConfig) -> Result<Self, Self::Error> {
         match indicator.indicator.as_str() {
-            "igt" => Ok(Indicator { indicator: IndicatorType::Igt, default: indicator.default, visible: indicator.visible }),
-            "position" => {
-                Ok(Indicator { indicator: IndicatorType::Position, default: indicator.default, visible: indicator.visible })
-            },
+            "igt" => Ok(Indicator {
+                indicator: IndicatorType::Igt,
+                default: indicator.default,
+                visible: indicator.visible,
+            }),
+            "position" => Ok(Indicator {
+                indicator: IndicatorType::Position,
+                default: indicator.default,
+                visible: indicator.visible,
+            }),
             "position_change" => Ok(Indicator {
                 indicator: IndicatorType::PositionChange,
-                default: indicator.default, visible: indicator.visible
-                
+                default: indicator.default,
+                visible: indicator.visible,
             }),
-            "animation" => {
-                Ok(Indicator { indicator: IndicatorType::Animation, default: indicator.default, visible: indicator.visible })
-            },
-            "game_version" => {
-                Ok(Indicator { indicator: IndicatorType::GameVersion, default: indicator.default, visible: indicator.visible })
-            },
-            "fps" => Ok(Indicator { indicator: IndicatorType::Fps, default: indicator.default, visible: indicator.visible }),
-            "framecount" => {
-                Ok(Indicator { indicator: IndicatorType::FrameCount, default: indicator.default, visible: indicator.visible })
-            },
-            "imgui_debug" => {
-                Ok(Indicator { indicator: IndicatorType::ImguiDebug, default: indicator.default, visible: indicator.visible })
-            },
+            "animation" => Ok(Indicator {
+                indicator: IndicatorType::Animation,
+                default: indicator.default,
+                visible: indicator.visible,
+            }),
+            "game_version" => Ok(Indicator {
+                indicator: IndicatorType::GameVersion,
+                default: indicator.default,
+                visible: indicator.visible,
+            }),
+            "fps" => Ok(Indicator {
+                indicator: IndicatorType::Fps,
+                default: indicator.default,
+                visible: indicator.visible,
+            }),
+            "framecount" => Ok(Indicator {
+                indicator: IndicatorType::FrameCount,
+                default: indicator.default,
+                visible: indicator.visible,
+            }),
+            "imgui_debug" => Ok(Indicator {
+                indicator: IndicatorType::ImguiDebug,
+                default: indicator.default,
+                visible: indicator.visible,
+            }),
             value => Err(format!("Unrecognized indicator: {value}")),
         }
     }
@@ -229,21 +464,56 @@ enum CfgCommand {
 }
 
 impl CfgCommand {
-    fn into_widget(self, settings: &Settings, chains: &Pointers) -> Option<Box<dyn Widget>> {
+    fn into_widget(
+        self,
+        settings: &Settings,
+        chains: &Pointers,
+        features: &Vec<Feature>,
+    ) -> Option<Box<dyn Widget>> {
+        let mut exit = false;
         let widget = match self {
             CfgCommand::Flag { flag, hotkey } => {
+                features.iter().filter(|f| !f.visible).for_each(|f| {
+                    if !exit {
+                        if let Some(fl) = f.flag.as_ref() {
+                            if let Ok(flag_spec) = FlagSpec::try_from(fl.clone()) {
+                                exit = flag_spec.label == flag.label;
+                            }
+                        }
+                    }
+                });
+
+                if exit {
+                    return Some(Box::new(NoneWidget {}));
+                }
                 flag_widget(&flag.label, (flag.getter)(chains).clone(), hotkey)
             },
-            CfgCommand::MultiFlag { flag, hotkey } => multi_flag(
-                &flag.label,
-                flag.items.iter().map(|flag| flag(chains).clone()).collect(),
-                hotkey,
-            ),
-            CfgCommand::MultiFlagUser { flags, hotkey, label } => multi_flag(
+            CfgCommand::MultiFlag { flag, hotkey } => {
+                multi_flag(
+                    &flag.label,
+                    flag.items.iter().map(|flag| flag(chains).clone()).collect(),
+                    hotkey,
+                )
+            },
+            CfgCommand::MultiFlagUser { flags, hotkey, label } => {
+                features.iter().filter(|f| !f.visible).for_each(|f| {
+                    if !exit {
+                        if let Some(fls) = f.flags.as_ref() {
+                            fls.iter().for_each(|flag| {
+                                exit = flags.iter().any(|f| f.label == *flag);
+                            });
+                        }
+                    }
+                });
+                if exit {
+                    return Some(Box::new(NoneWidget {}));
+                }
+                multi_flag(
                 label.as_str(),
                 flags.iter().map(|flag| (flag.getter)(chains).clone()).collect(),
                 hotkey,
-            ),
+                )
+            },
             CfgCommand::SpecialFlag { flag, hotkey } if flag == "deathcam" => deathcam(
                 chains.deathcam.0.clone(),
                 chains.deathcam.1.clone(),
@@ -315,7 +585,10 @@ impl CfgCommand {
             CfgCommand::Quitout { hotkey } => quitout(chains.quitout.clone(), hotkey.into_option()),
             CfgCommand::Group { label, commands } => group(
                 label.as_str(),
-                commands.into_iter().filter_map(|c| c.into_widget(settings, chains)).collect(),
+                commands
+                    .into_iter()
+                    .filter_map(|c| c.into_widget(settings, chains, features))
+                    .collect(),
                 settings.display,
             ),
         };
@@ -352,8 +625,15 @@ impl Config {
             .map_err(|e| format!("TOML config error at {}: {}", e.path(), e.inner()))
     }
 
-    pub(crate) fn make_commands(self, chains: &Pointers) -> Vec<Box<dyn Widget>> {
-        self.commands.into_iter().filter_map(|c| c.into_widget(&self.settings, chains)).collect()
+    pub(crate) fn make_commands(
+        self,
+        chains: &Pointers,
+        features: &Vec<Feature>,
+    ) -> Vec<Box<dyn Widget>> {
+        self.commands
+            .into_iter()
+            .filter_map(|c| c.into_widget(&self.settings, chains, &features))
+            .collect()
     }
 }
 
@@ -367,6 +647,7 @@ impl Default for Config {
                 dxgi_debug: false,
                 show_console: false,
                 indicators: Indicator::default_set(),
+                features: Feature::default_set(),
                 disable_update_prompt: false,
                 radial_menu_open: ControllerCombination::try_from("l3+r3").ok(),
             },
@@ -501,9 +782,9 @@ mod tests {
     fn test_parse_ok() {
         println!(
             "{:?}",
-            toml::from_str::<toml::Value>(include_str!("../../jdsd_er_practice_tool.toml"))
+            toml::from_str::<toml::Value>(include_str!("../../../jdsd_er_practice_tool.toml"))
         );
-        println!("{:?}", Config::parse(include_str!("../../jdsd_er_practice_tool.toml")));
+        println!("{:?}", Config::parse(include_str!("../../../jdsd_er_practice_tool.toml")));
     }
 
     #[test]
