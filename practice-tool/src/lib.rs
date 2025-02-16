@@ -238,6 +238,7 @@ pub unsafe extern "stdcall" fn DllMain(hmodule: HINSTANCE, reason: u32, _: *mut 
         Lazy::force(&DIRECTINPUT8CREATE);
         Lazy::force(&XINPUTGETSTATE);
 
+        let cloned_hmodule = hmodule.clone();
         thread::spawn(move || {
             apply_no_logo();
 
@@ -248,10 +249,10 @@ pub unsafe extern "stdcall" fn DllMain(hmodule: HINSTANCE, reason: u32, _: *mut 
                 .unwrap_or(false)
             {
                 if await_rshift() {
-                    start_practice_tool(hmodule)
+                    start_practice_tool(cloned_hmodule)
                 }
             } else {
-                start_practice_tool(hmodule)
+                start_practice_tool(cloned_hmodule)
             }
         });
     }
