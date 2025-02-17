@@ -29,11 +29,10 @@ impl Config {
     pub(crate) fn make_commands(
         self,
         chains: &Pointers,
-        features: &Vec<Feature>,
     ) -> Vec<Box<dyn Widget>> {
         self.commands
             .into_iter()
-            .filter_map(|c| c.into_widget(&self.settings, chains, &features))
+            .filter_map(|c| c.into_widget(&self.settings, chains))
             .collect()
     }
 }

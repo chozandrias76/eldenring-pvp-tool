@@ -1,4 +1,5 @@
 pub mod feature;
+pub mod group;
 
 use hudhook::tracing::error;
 use libeldenring::prelude::*;
@@ -115,12 +116,11 @@ impl CfgCommand {
         self,
         settings: &Settings,
         chains: &Pointers,
-        features: &Vec<Feature>,
     ) -> Option<Box<dyn Widget>> {
         let mut exit = false;
         let widget = match self {
             CfgCommand::Flag { flag, hotkey } => {
-                features.iter().filter(|f| !f.visible).for_each(|f| {
+                &settings.features.iter().filter(|f| !f.visible).for_each(|f| {
                     if !exit {
                         if let Some(fl) = f.flag.as_ref() {
                             if let Ok(flag_spec) = FlagSpec::try_from(fl.clone()) {
@@ -143,7 +143,7 @@ impl CfgCommand {
                 )
             },
             CfgCommand::MultiFlagUser { flags, hotkey, label } => {
-                features.iter().filter(|f| !f.visible).for_each(|f| {
+                settings.features.iter().filter(|f| !f.visible).for_each(|f| {
                     if !exit {
                         if let Some(fls) = f.flags.as_ref() {
                             fls.iter().for_each(|flag| {
@@ -187,13 +187,15 @@ impl CfgCommand {
                 hotkey_load.into_option(),
                 settings.display,
             )),
-            CfgCommand::Position { position, save } => save_position(
+            CfgCommand::Position { position, save } => {
+                save_position(
                 chains.global_position.clone(),
                 chains.chunk_position.clone(),
                 chains.torrent_chunk_position.clone(),
                 position.into_option(),
                 save,
-            ),
+                )
+            },
             CfgCommand::NudgePosition { nudge, nudge_up, nudge_down } => nudge_position(
                 chains.global_position.clone(),
                 chains.chunk_position.clone(),
@@ -234,7 +236,7 @@ impl CfgCommand {
                 label.as_str(),
                 commands
                     .into_iter()
-                    .filter_map(|c| c.into_widget(settings, chains, features))
+                    .filter_map(|c| c.into_widget(settings, chains))
                     .collect(),
                 settings.display,
             ),

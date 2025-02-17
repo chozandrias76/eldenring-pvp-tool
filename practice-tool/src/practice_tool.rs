@@ -203,7 +203,7 @@ impl PracticeTool {
         };
         let settings = config.settings.clone();
         let radial_menu = config.radial_menu.clone();
-        let widgets = config.make_commands(&pointers, &settings.features);
+        let widgets = config.make_commands(&pointers);
 
         let (log_tx, log_rx) = crossbeam_channel::unbounded();
         info!("Practice tool initialized");
