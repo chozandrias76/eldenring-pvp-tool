@@ -138,12 +138,28 @@ impl CfgCommand {
                 )
             },
             CfgCommand::MultiFlagUser { flags, hotkey, label } => {
-                settings.features.iter().filter(|f| !f.visible).for_each(|f| {
+                settings.features.iter().filter(|feature| !feature.visible).for_each(|feature| {
                     if !exit {
-                        if let Some(fls) = f.flags.as_ref() {
-                            fls.iter().for_each(|flag| {
-                                exit = flags.iter().any(|f| f.label == *flag);
-                            });
+                        if let Some(feature_flags) = feature.flags.as_ref() {
+                            let feature_flags_into_names: Vec<String> = feature_flags
+                                .iter()
+                                .map(|flag| FlagSpec::try_from(flag.clone()).unwrap().label)
+                                .collect();
+                            let command_flags = flags
+                                .iter()
+                                .map(|flag: &FlagSpec| flag.label.clone())
+                                .collect::<Vec<String>>();
+                            let mut sorted_command_flags = command_flags.clone();
+                            sorted_command_flags.sort();
+                            let mut sorted_feature_flags = feature_flags_into_names.clone();
+                            sorted_feature_flags.sort();
+                            // '["Inf Focus", "Inf Focus (AoW)"] ["show_all_graces",
+                            // "show_all_map_layers"]'
+                            exit = sorted_command_flags == sorted_feature_flags;
+                            // feature_flags.iter().for_each(|flag| {
+                            //     exit = flags.iter().any(|flag_spec|
+                            // flag_spec.label == *flag);
+                            // });
                         }
                     }
                 });
@@ -255,7 +271,6 @@ impl CfgCommand {
             },
             CfgCommand::Quitout { hotkey } => quitout(chains.quitout.clone(), hotkey.into_option()),
             CfgCommand::Group { label, commands } => {
-                // Render Flags, Position Storage
                 settings.features.iter().filter(|feature| !feature.visible).for_each(|feature| {
                     if !exit {
                         if let Some(feature_group) = feature.group.as_ref() {
