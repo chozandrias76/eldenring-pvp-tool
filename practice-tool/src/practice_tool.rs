@@ -166,6 +166,7 @@ impl PracticeTool {
         if config.settings.log_level.inner() < LevelFilter::DEBUG || !config.settings.show_console {
             hudhook::free_console().ok();
         }
+        let (log_tx, log_rx) = crossbeam_channel::unbounded();
 
         let pointers = Pointers::new();
         let poll_interval = Duration::from_millis(100);
@@ -186,13 +187,17 @@ impl PracticeTool {
                 params.get_equip_param_goods()
             },
             |mut epg| {
+                //TODO: Figure out if there are other things that invalidate a Seamless session
+                /* 
                 if let Some(spectral_steed_whistle) =
                     epg.find(|i| i.id == 130).and_then(|p| p.param)
                 {
                     spectral_steed_whistle.icon_id = 12;
                 };
+                */
             },
         );
+
 
         let update_available =
             if config.settings.disable_update_prompt { Update::UpToDate } else { Update::check() };
@@ -201,14 +206,12 @@ impl PracticeTool {
             let (maj, min, patch) = version::get_version().into();
             format!("Game Ver {}.{:02}.{}", maj, min, patch)
         };
+        
         let settings = config.settings.clone();
         let radial_menu = config.radial_menu.clone();
         let widgets = config.make_commands(&pointers);
-
-        let (log_tx, log_rx) = crossbeam_channel::unbounded();
         info!("Practice tool initialized");
-
-        PracticeTool {
+        return PracticeTool {
             settings,
             pointers,
             version_label,
@@ -234,7 +237,7 @@ impl PracticeTool {
             radial_menu_open_time: Instant::now(),
             press_queue: Vec::new(),
             release_queue: Vec::new(),
-        }
+        };
     }
 
     fn render_visible(&mut self, ui: &imgui::Ui) {

@@ -97,4 +97,5 @@ features = [
   { flag = "gravity", visible = false, default = false },
   { flag = "torrent_gravity", visible = false, default = false },
   { flags = ["collision", "torrent_collision"], visible = false, default = false },
+  { group = "Render flags", visible = false, default = false}
 ]

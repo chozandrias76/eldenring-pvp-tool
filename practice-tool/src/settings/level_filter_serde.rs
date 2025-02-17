@@ -23,3 +23,9 @@ impl TryFrom<String> for LevelFilterSerde {
         ))
     }
 }
+
+impl Default for LevelFilterSerde {
+    fn default() -> Self {
+        LevelFilterSerde(LevelFilter::INFO)
+    }
+}

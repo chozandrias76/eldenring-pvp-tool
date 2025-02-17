@@ -63,3 +63,9 @@ impl Update {
         }
     }
 }
+
+impl Default for Update {
+    fn default() -> Self {
+        Update::UpToDate
+    }
+}

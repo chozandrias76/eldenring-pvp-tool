@@ -30,3 +30,19 @@ pub(crate) struct Settings {
     pub(crate) features: Vec<Feature>,
     pub(crate) radial_menu_open: Option<ControllerCombination>,
 }
+
+impl Default for Settings {
+    fn default() -> Self {
+        Self {
+            log_level: LevelFilterSerde::default(),
+            display: Key::try_from("F1").unwrap(),
+            hide: None,
+            dxgi_debug: false,
+            show_console: false,
+            disable_update_prompt: false,
+            indicators: Indicator::default_set(),
+            features: Feature::default_set(),
+            radial_menu_open: None,
+        }
+    }
+}

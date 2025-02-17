@@ -4,6 +4,7 @@ use std::fmt::Display;
 
 use windows::Win32::System::LibraryLoader::GetModuleHandleA;
 
+use crate::codegen::base_addresses::BASE_ADDRESSES_2_06_0;
 use crate::memedit::*;
 use crate::prelude::base_addresses::BaseAddresses;
 use crate::prelude::Version;
@@ -512,6 +513,106 @@ impl Pointers {
             show_all_map_layers: bitflag!(0b1; func_check_graces),
             show_all_graces: bitflag!(0b1; func_check_graces + 0x1),
             base_addresses,
+        }
+    }
+}
+
+impl Default for Pointers {
+    fn default() -> Self {
+        Self {
+            one_shot: bitflag!(0b1; 0x0),
+            no_damage: bitflag!(0b1; 0x0),
+            no_dead: bitflag!(0b1; 0x0),
+            no_hit: bitflag!(0b1; 0x0),
+            no_goods_consume: bitflag!(0b1; 0x0),
+            no_stamina_consume: bitflag!(0b1; 0x0),
+            no_fp_consume: bitflag!(0b1; 0x0),
+            no_arrows_consume: bitflag!(0b1; 0x0),
+            no_attack: bitflag!(0b1; 0x0),
+            no_move: bitflag!(0b1; 0x0),
+            no_update_ai: bitflag!(0b1; 0x0),
+            no_trigger_event: bitflag!(0b1; 0x0),
+            no_ashes_of_war_fp_consume: bitflag!(0b1; 0x0),
+            collision: bitflag!(0b1; 0x0),
+            torrent_no_dead: bitflag!(0b1; 0x0),
+            torrent_gravity: bitflag!(0b1; 0x0),
+            torrent_collision: bitflag!(0b1; 0x0),
+            all_no_dead: bitflag!(0b1; 0x0),
+            current_target: pointer_chain!(0x0),
+            character_stats: pointer_chain!(0x0),
+            character_points: pointer_chain!(0x0),
+            character_blessings: None,
+            runes: pointer_chain!(0x0),
+            igt: pointer_chain!(0x0),
+            fps: pointer_chain!(0x0),
+            runearc: bitflag!(0b1; 0x0),
+            cur_anim: pointer_chain!(0x0),
+            cur_anim_time: pointer_chain!(0x0),
+            cur_anim_length: pointer_chain!(0x0),
+            weapon_hitbox1: bitflag!(0b1; 0x0),
+            weapon_hitbox2: bitflag!(0b1; 0x0),
+            weapon_hitbox3: bitflag!(0b1; 0x0),
+            quitout: pointer_chain!(0x0),
+            cursor_show: bitflag!(0b1; 0x0),
+            menu_timer: pointer_chain!(0x0),
+            gravity: bitflag!(0b1; 0x0),
+            display_stable_pos: bitflag!(0b1; 0x0),
+            global_position: Position {
+                x: pointer_chain!(0x0),
+                y: pointer_chain!(0x0),
+                z: pointer_chain!(0x0),
+                angle1: pointer_chain!(0x0),
+                angle2: pointer_chain!(0x0),
+                map_id: None,
+            },
+            stable_position: Position {
+                x: pointer_chain!(0x0),
+                y: pointer_chain!(0x0),
+                z: pointer_chain!(0x0),
+                angle1: pointer_chain!(0x0),
+                angle2: pointer_chain!(0x0),
+                map_id: None,
+            },
+            chunk_position: Position {
+                x: pointer_chain!(0x0),
+                y: pointer_chain!(0x0),
+                z: pointer_chain!(0x0),
+                angle1: pointer_chain!(0x0),
+                angle2: pointer_chain!(0x0),
+                map_id: None,
+            },
+            torrent_chunk_position: Position {
+                x: pointer_chain!(0x0),
+                y: pointer_chain!(0x0),
+                z: pointer_chain!(0x0),
+                angle1: pointer_chain!(0x0),
+                angle2: pointer_chain!(0x0),
+                map_id: None,
+            },
+            animation_speed: pointer_chain!(0x0),
+            torrent_animation_speed: pointer_chain!(0x0),
+            deathcam: (bitflag!(0b1; 0x0), bitflag!(0b1; 0x0), pointer_chain!(0x0)),
+            field_area_direction: bitflag!(0b1; 0x0),
+            field_area_altimeter: bitflag!(0b1; 0x0),
+            field_area_compass: bitflag!(0b1; 0x0),
+            hitbox_high: bitflag!(0b1; 0x0),
+            hitbox_low: bitflag!(0b1; 0x0),
+            hitbox_f: bitflag!(0b1; 0x0),
+            hitbox_character: bitflag!(0b1; 0x0),
+            hitbox_event: bitflag!(0b1; 0x0),
+            mesh_color: pointer_chain!(0x0),
+            show_geom: vec![bitflag!(0b1; 0x0)],
+            show_chr: bitflag!(0b1; 0x0),
+            func_warp: 0,
+            warp1: pointer_chain!(0x0),
+            warp2: pointer_chain!(0x0),
+            func_item_spawn: 0,
+            func_item_inject: 0,
+            func_dbg_action_force: pointer_chain!(0x0),
+            func_dbg_action_force_state_values: (0, 0),
+            show_all_map_layers: bitflag!(0b1; 0x0),
+            show_all_graces: bitflag!(0b1; 0x0),
+            base_addresses: BASE_ADDRESSES_2_06_0,
         }
     }
 }

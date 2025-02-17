@@ -6,3 +6,12 @@ pub(crate) struct RadialMenu {
     pub key: Key,
     pub label: String,
 }
+
+impl Default for RadialMenu {
+    fn default() -> Self {
+        Self {
+            key: Key::try_from("F1").unwrap(),
+            label: "Radial Menu".to_string(),
+        }
+    }
+}
