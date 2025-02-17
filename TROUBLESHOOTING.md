@@ -46,7 +46,7 @@ This method is the only one officially supported.
 
 ## I found an issue. What do I do?
 
-- Apply the following settings to `jdsd_er_practice_tool.toml`:
+- Apply the following settings to `er_invasion_tool.toml`:
   - `log_level = "TRACE"` 
   - `dxgi_debug = true`
 - Enable DXGI debug layer:
@@ -75,7 +75,7 @@ intended for faster issues feedback cycles. Don't use it otherwise!
 ## How can I change the key bindings?
 
 You can customize the default ones or add your own by editing
-`jdsd_er_practice_tool.toml` with your favorite text editor.
+`er_invasion_tool.toml` with your favorite text editor.
 
 The bundled file contains all possible settings with predefined hotkeys and is
 mostly self-explanatory.

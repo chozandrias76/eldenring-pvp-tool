@@ -1,8 +1,10 @@
 use std::fmt::Write;
 use std::sync::atomic::{AtomicBool, Ordering};
-use std::sync::Mutex;
+use std::sync::{Mutex, OnceLock};
 use std::thread;
 use std::time::{Duration, Instant};
+use std::fs;
+use toml::Value;
 use whoami;
 
 use const_format::formatcp;
@@ -82,24 +84,35 @@ pub(crate) struct PracticeTool {
     release_queue: Vec<imgui::Key>,
 }
 
+pub static RUNTIME_CONFIG_FILENAME: OnceLock<String> = OnceLock::new();
+
 impl PracticeTool {
     pub(crate) fn new() -> Self {
         hudhook::alloc_console().ok();
         log_panics::init();
+        let config_content = include_str!("../../Cargo.toml");
+        let config: Value = config_content.parse::<Value>().expect("Failed to parse Cargo.toml");
+        let invasion_tool_config = config.get("er_invasion_tool").expect("er_invasion_tool section expected in Cargo.toml.");
+        let runtime_config_filename = invasion_tool_config.get("config_file_name").and_then(Value::as_str).unwrap_or("er_invasion_tool.toml");
+        RUNTIME_CONFIG_FILENAME.set(runtime_config_filename.to_string()).expect("Failed to set runtime config filename");
 
         fn load_config() -> Result<Config, String> {
-            let config_path = crate::util::get_dll_path()
+                let runtime_config_filename = RUNTIME_CONFIG_FILENAME.get().expect("Unable to get runtime config filename");
+                let config_path = crate::util::get_dll_path()
                 .map(|mut path| {
                     path.pop();
-                    path.push("jdsd_er_practice_tool.toml");
+                    path.push(runtime_config_filename);
                     path
                 })
-                .ok_or_else(|| "Couldn't find config file".to_string())?;
+                .expect("Couldn't find config file");
 
             if !config_path.exists() {
-                std::fs::write(&config_path, include_str!("../../jdsd_er_practice_tool.toml"))
+                let default_config_content = std::fs::read_to_string(format!("../../{}", runtime_config_filename))
+                    .map_err(|e| format!("Couldn't read default config file: {}", e))?;
+                std::fs::write(&config_path, default_config_content)
                     .map_err(|e| format!("Couldn't write default config file: {}", e))?;
             }
+
 
             let config_content = std::fs::read_to_string(config_path)
                 .map_err(|e| format!("Couldn't read config file: {}", e))?;
@@ -114,7 +127,7 @@ impl PracticeTool {
                 Some({
                     error!("{}", e);
                     format!(
-                        "Configuration error, please review your jdsd_er_practice_tool.toml \
+                        "Configuration error, please review your {runtime_config_filename} \
                          file.\n\n{e}"
                     )
                 }),
@@ -425,13 +438,10 @@ impl PracticeTool {
                         ));
                         ui.separator();
                         ui.text(format!(
-                            "Press the {} key to open/close the tool's\ninterface.\n\nYou can \
-                             toggle flags/launch commands by\nclicking in the UI or by \
+                            "You can toggle flags or launch commands by\nclicking in the UI or by \
                              pressing\nthe hotkeys (in the parentheses).\n\nYou can configure \
-                             your tool by editing\nthe jdsd_er_practice_tool.toml file with\na \
-                             text editor. If you break something,\njust download a fresh \
-                             file!\n\nThank you for using my tool! <3\n",
-                            self.settings.display
+                             your tool by editing\nthe er_invasion_tool.toml file with\na \
+                             text editor."
                         ));
                         ui.separator();
                         ui.text("-- johndisandonato");

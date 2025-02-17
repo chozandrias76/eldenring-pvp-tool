@@ -19,10 +19,15 @@ use hudhook::inject::Process;
 use hudhook::tracing::debug;
 use libjdsd_er_practice_tool::util::*;
 use textwrap_macros::dedent;
+use toml::Value;
 use windows::Win32::System::Threading::{TerminateProcess, WaitForSingleObjectEx};
 use windows::Win32::UI::WindowsAndMessaging::*;
 
 fn install() -> Result<()> {
+    let config_content = include_str!("../../Cargo.toml");
+    let config: Value = config_content.parse::<Value>().expect("Failed to parse Cargo.toml");
+    let invasion_tool_config = config.get("er_invasion_tool").expect("er_invasion_tool section expected in Cargo.toml.");
+    let runtime_config_filename = invasion_tool_config.get("config_file_name").and_then(Value::as_str).unwrap_or("er_invasion_tool.toml");
     message_box(
         "johndisandonato's Elden Ring practice tool",
         "Welcome to the Elden Ring practice tool's installer!\n\nPlease start Elden Ring, if you \
@@ -59,11 +64,11 @@ fn install() -> Result<()> {
     let config_path = dll_path
         .parent()
         .ok_or_else(|| anyhow!("{dll_path:?} has no parent"))?
-        .join("jdsd_er_practice_tool.toml");
+        .join(runtime_config_filename);
 
     if !config_path.exists() {
         bail!(
-            "Could not find jdsd_er_practice_tool.toml.\nPlease make sure you have extracted the \
+            "Could not find er_invasion_tool.toml.\nPlease make sure you have extracted the \
              zip file before running the installer."
         );
     }
@@ -77,7 +82,7 @@ fn install() -> Result<()> {
 
     debug!("Installing...");
     let dll_path_dest = game_install_path.join("dinput8.dll");
-    let config_path_dest = game_install_path.join("jdsd_er_practice_tool.toml");
+    let config_path_dest = game_install_path.join(runtime_config_filename);
 
     if dll_path_dest.exists() {
         if message_box(

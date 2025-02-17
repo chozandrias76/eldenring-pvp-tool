@@ -2118,6 +2118,7 @@ dependencies = [
  "serde_json",
  "serde_yaml 0.9.34+deprecated",
  "textwrap 0.15.2",
+ "toml 0.5.11",
  "widestring",
  "zip",
 ]

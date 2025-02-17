@@ -16,6 +16,7 @@ serde_yaml = "0.9.32"
 textwrap = "0.15.0"
 widestring = "0.5.1"
 zip = "0.6"
+toml = "*"
 
 once_cell.workspace = true
 practice-tool-tasks.workspace = true
