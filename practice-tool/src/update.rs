@@ -11,7 +11,7 @@ const PRACTICE_TOOL_VERSION: Version = Version {
 };
 
 const UPDATE_URL: &str =
-    "https://api.github.com/repos/veeenu/eldenring-practice-tool/releases/latest";
+    "https://api.github.com/repos/chozandrias76/eldenring-pvp-tool/releases/latest";
 
 pub enum Update {
     Available { url: String, notes: String },

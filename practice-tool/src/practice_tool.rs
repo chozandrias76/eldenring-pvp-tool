@@ -3,6 +3,7 @@ use std::sync::atomic::{AtomicBool, Ordering};
 use std::sync::Mutex;
 use std::thread;
 use std::time::{Duration, Instant};
+use whoami;
 
 use const_format::formatcp;
 use hudhook::tracing::metadata::LevelFilter;
@@ -303,7 +304,8 @@ impl PracticeTool {
                     | WindowFlags::ALWAYS_AUTO_RESIZE
             })
             .build(|| {
-                ui.text("johndisandonato's Practice Tool");
+                let user_name = whoami::username();
+                ui.text(format!("{}'s ER Invasion Tool", user_name));
 
                 // ui.same_line();
 
@@ -327,9 +329,7 @@ impl PracticeTool {
                         self.pointers.cursor_show.set(true);
 
                         ui.text(
-                            "You can toggle indicators here, as\nwell as reset the frame \
-                             counter.\n\nKeep in mind that the available\nindicators and order of \
-                             them depend\non your config file.",
+                            "You can toggle overlay indicators here.",
                         );
                         ui.separator();
 
@@ -823,20 +823,21 @@ impl ImguiRenderLoop for PracticeTool {
 
     fn initialize(&mut self, ctx: &mut Context, _: &mut dyn RenderContext) {
         let fonts = ctx.fonts();
+        let dyslexic_font_data = include_bytes!("../../lib/data/OpenDyslexicMono-Regular.otf");
         self.fonts = Some(FontIDs {
             small: fonts.add_font(&[FontSource::TtfData {
-                data: include_bytes!("../../lib/data/ComicMono.ttf"),
-                size_pixels: 11.,
+                data: dyslexic_font_data,
+                size_pixels: 16.,
                 config: None,
             }]),
             normal: fonts.add_font(&[FontSource::TtfData {
-                data: include_bytes!("../../lib/data/ComicMono.ttf"),
-                size_pixels: 18.,
+                data: dyslexic_font_data,
+                size_pixels: 20.,
                 config: None,
             }]),
             big: fonts.add_font(&[FontSource::TtfData {
-                data: include_bytes!("../../lib/data/ComicMono.ttf"),
-                size_pixels: 24.,
+                data: dyslexic_font_data,
+                size_pixels: 28.,
                 config: None,
             }]),
         });

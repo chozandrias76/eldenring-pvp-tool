@@ -33,6 +33,7 @@ textwrap-macros = "0.3.0"
 toml = "0.5.8"
 tracing-subscriber = "0.3.16"
 ureq = { version = "2.4.0", features = ["json"] }
+whoami = "1.5.2"
 
 libeldenring = { path = "../lib/libeldenring" }
 
