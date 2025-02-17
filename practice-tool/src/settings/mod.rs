@@ -1,16 +1,15 @@
 mod cfg_command;
-mod feature;
 mod flag_spec;
 pub mod indicator;
 mod level_filter_serde;
 mod multi_flag_spec;
 pub mod config;
 pub mod radial_menu;
+use cfg_command::feature::Feature;
 use practice_tool_core::controller::ControllerCombination;
 use practice_tool_core::key::Key;
 use serde::Deserialize;
 
-use feature::Feature;
 use indicator::Indicator;
 use level_filter_serde::LevelFilterSerde;
 

@@ -1,5 +1,5 @@
+use super::cfg_command::feature::Feature;
 use super::cfg_command::CfgCommand;
-use super::feature::Feature;
 use super::radial_menu::RadialMenu;
 use super::Settings;
 use hudhook::tracing::metadata::LevelFilter;

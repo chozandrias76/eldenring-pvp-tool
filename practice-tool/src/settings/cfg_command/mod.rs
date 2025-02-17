@@ -1,3 +1,4 @@
+pub mod feature;
 
 use hudhook::tracing::error;
 use libeldenring::prelude::*;
@@ -24,7 +25,7 @@ use crate::widgets::savefile_manager::savefile_manager;
 use crate::widgets::target::Target;
 use crate::widgets::warp::Warp;
 
-use super::feature::Feature;
+use feature::Feature;
 use super::flag_spec::FlagSpec;
 use super::multi_flag_spec::MultiFlagSpec;
 use super::Settings;
@@ -245,7 +246,7 @@ impl CfgCommand {
 
 #[derive(Deserialize, Debug)]
 #[serde(untagged)]
-enum PlaceholderOption<T> {
+pub enum PlaceholderOption<T> {
     Data(T),
     #[allow(dead_code)]
     Placeholder(bool),
