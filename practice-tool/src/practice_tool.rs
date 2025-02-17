@@ -187,17 +187,15 @@ impl PracticeTool {
                 params.get_equip_param_goods()
             },
             |mut epg| {
-                //TODO: Figure out if there are other things that invalidate a Seamless session
-                /* 
-                if let Some(spectral_steed_whistle) =
-                    epg.find(|i| i.id == 130).and_then(|p| p.param)
-                {
-                    spectral_steed_whistle.icon_id = 12;
-                };
-                */
+                // TODO: Figure out if there are other things that invalidate a
+                // Seamless session
+                // if let Some(spectral_steed_whistle) =
+                // epg.find(|i| i.id == 130).and_then(|p| p.param)
+                // {
+                // spectral_steed_whistle.icon_id = 12;
+                // };
             },
         );
-
 
         let update_available =
             if config.settings.disable_update_prompt { Update::UpToDate } else { Update::check() };
@@ -206,7 +204,7 @@ impl PracticeTool {
             let (maj, min, patch) = version::get_version().into();
             format!("Game Ver {}.{:02}.{}", maj, min, patch)
         };
-        
+
         let settings = config.settings.clone();
         let radial_menu = config.radial_menu.clone();
         let widgets = config.make_commands(&pointers);
@@ -676,7 +674,6 @@ impl PracticeTool {
             }
 
             let menu_out = radial_menu(ui, &menu, self.gamepad_stick, h * 0.1, h * 0.25);
-
             if released_a {
                 if let Some(i) = menu_out {
                     self.radial_menu[i].key.keys(&mut self.press_queue);
@@ -761,6 +758,17 @@ impl ImguiRenderLoop for PracticeTool {
 
     fn render(&mut self, ui: &mut imgui::Ui) {
         let font_token = self.set_font(ui);
+        use imgui::{ImColor32, StyleColor};
+        const WINDOW_BACKGROUND: [f32; 4] = [0.1, 0.1, 0.1, 0.9]; // Dark gray with slight transparency
+        const TEXT_COLOR: [f32; 4] = [1.0, 1.0, 1.0, 1.0]; // White, fully opaque
+        const BUTTON_COLOR: [f32; 4] = [0.2, 0.2, 0.2, 0.8]; // Darker gray with some transparency
+        const ACTIVE_BUTTON_COLOR: [f32; 4] = [0.3, 0.6, 1.0, 1.0]; // Vibrant blue, fully opaque
+
+        let text_color = ui.push_style_color(StyleColor::Text, TEXT_COLOR);
+        let bg_color = ui.push_style_color(StyleColor::WindowBg, WINDOW_BACKGROUND);
+        let button_color = ui.push_style_color(StyleColor::Button, BUTTON_COLOR);
+        let button_active_color =
+            ui.push_style_color(StyleColor::ButtonActive, ACTIVE_BUTTON_COLOR);
 
         let display = self.settings.display.is_pressed(ui);
         let hide = self.settings.hide.map(|k| k.is_pressed(ui)).unwrap_or(false);
@@ -807,6 +815,10 @@ impl ImguiRenderLoop for PracticeTool {
 
         self.render_logs(ui);
         drop(font_token);
+        text_color.pop();
+        bg_color.pop();
+        button_color.pop();
+        button_active_color.pop();
     }
 
     fn initialize(&mut self, ctx: &mut Context, _: &mut dyn RenderContext) {
