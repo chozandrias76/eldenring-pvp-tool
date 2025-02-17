@@ -19,7 +19,10 @@ use sys::ImVec2;
 use tracing_subscriber::prelude::*;
 use windows::Win32::UI::Input::XboxController::{XINPUT_GAMEPAD_A, XINPUT_GAMEPAD_B, XINPUT_STATE};
 
-use crate::config::{Config, IndicatorType, RadialMenu, Settings};
+use crate::settings::config::Config;
+use crate::settings::indicator::IndicatorType;
+use crate::settings::radial_menu::RadialMenu;
+use crate::settings::Settings;
 use crate::update::Update;
 use crate::{util, XINPUTGETSTATE};
 
