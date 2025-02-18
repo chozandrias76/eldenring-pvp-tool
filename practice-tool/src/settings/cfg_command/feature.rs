@@ -104,6 +104,7 @@ impl Feature {
             },
             Feature {
                 group: Some("Position storage".to_string()),
+                visible: false,
                 ..Feature::default()
             },
         ]
