@@ -39,7 +39,7 @@ impl Update {
             Err(e) => return Update::Error(e.to_string()),
         };
 
-        let version = match Version::parse(&release.tag_name) {
+        let version = match Version::parse(&release.tag_name.as_str().replace("v", "")) {
             Ok(version) => version,
             Err(e) => return Update::Error(e.to_string()),
         };
