@@ -1,26 +1,19 @@
 # Elden Ring Practice Tool
 
-[![build](https://github.com/veeenu/eldenring-practice-tool/actions/workflows/build.yml/badge.svg)](https://github.com/veeenu/eldenring-practice-tool/actions)
-[![GitHub all releases](https://img.shields.io/github/downloads/veeenu/eldenring-practice-tool/total)](https://github.com/veeenu/eldenring-practice-tool/releases/latest)
-[![GitHub](https://img.shields.io/github/license/veeenu/eldenring-practice-tool)](https://github.com/veeenu/eldenring-practice-tool/blob/main/LICENSE) 
-[![Discord](https://img.shields.io/discord/267623298647457802)](https://discord.gg/jhF3jTTCUs)
-[![Twitch](https://img.shields.io/twitch/status/johndisandonato?style=social)](https://twitch.tv/johndisandonato)
-[![Patreon](https://img.shields.io/badge/Support_me-Patreon-orange)](https://www.patreon.com/johndisandonato)
+[![build](https://github.com/chozandrias76/eldenring-pvp-tool/actions/workflows/build.yml/badge.svg)](https://github.com/chozandrias76/eldenring-pvp-tool/actions)
+[![GitHub all releases](https://img.shields.io/github/downloads/chozandrias76/eldenring-pvp-tool/total)](https://github.com/chozandrias76/eldenring-pvp-tool/releases/latest)
 
-A tool for practicing speedruns. Made with ❤️ by [johndisandonato](https://twitch.tv/johndisandonato).
+A tool for enhancing invasion and invasion build-making.
 
-The tool is free, and will always be free for everyone. If you enjoy it, please consider 
-[supporting me](https://www.patreon.com/johndisandonato)!
-
+The tool is free, and will always be free for everyone.
 ![Screenshot](lib/data/screenshot.jpg)
 
 ## Getting started
 
-Download the **latest stable release** [here](https://github.com/veeenu/eldenring-practice-tool/releases/latest).
+Download the **latest stable release** [here](https://github.com/chozandrias76/eldenring-pvp-tool/releases/latest).
 
 Prerequisites:
 
-- Steam must be open. Offline mode is fine, but the program must be started.
 - Antiviruses are disabled. This includes Windows Defender. If you don't want to do that, make sure to whitelist the contents of the practice tool in your antivirus.
 - You are using a _completely vanilla_ install of the game, _with no mods whatsoever_. If you installed mods already, please reinstall Elden Ring from scratch.
 - You are not using other overlay software, such as RivaTuner Statistics Server, FRAPS or similar. The Steam Overlay is an exception.
@@ -36,30 +29,28 @@ manually.
 ### Standalone
 
 - Extract all files from the zip archive. Anywhere will do.
-- Double-click `eldenring.exe` to start the game (Steam → right click **ELDEN
-  RING** → Manage → Browse Local Files). **Never** start the game from Steam: the tool won't work.
+- Double-click `offline_launcher_put_in_game_folder.bat` or similar to start the game
 - Double-click `jdsd_er_practice_tool.exe`.
 
-The tool will automatically appear over the game. Press `0` to open and close its interface.
+The tool will show similar to the screenshot(s) when it loads.
 
 ### Installed
 
 - Extract all files from the zip archive. Anywhere will do.
-- Locate your **ELDEN RING** installation (Steam → right click **ELDEN
-  RING** → Manage → Browse Local Files).
-- Copy `er_invasion_tool.toml` and `jdsd_er_practice_tool.dll` in the folder you
-  just found. Rename `jdsd_er_practice_tool.dll` to `dinput8.dll`. 
-- Double-click `eldenring.exe` to start the game. **Never** start the game from Steam: the tool won't work.
+- Locate your **ELDEN RING** installation.
+- Copy `er_invasion_tool.toml` and `jdsd_er_practice_tool.dll` within the `mods` folder in the folder you
+  just found. Create this folder if it doesn't exist.
+- Double-click your own DLL injector, such as [Mod Loader](https://github.com/techiew/EldenRingModLoader/releases/tag/Binary), to start the game. **Never** start the game from Steam: the tool won't work.
 - During the startup, from now on, hold the right shift button for a few seconds until 
   the tool appears on screen.
 
 If you don't want to load the tool, don't press right shift during startup!
 
-If you want to uninstall the tool, remove `dinput8.dll` and `er_invasion_tool.toml`.
+If you want to uninstall the tool, remove `jdsd_er_practice_tool.dll` and `er_invasion_tool.toml`.
 
 ## Running the tool on Linux
 
-The tool fully supports Linux and should run on Steam Deck seamlessly.
+The tool fully supports Linux and should run on Steam Deck seamlessly. But is not regularly tested.
 
 ### Standalone
 
@@ -85,16 +76,5 @@ If you are looking to submit a patch, check the [contributing guide](CONTRIBUTIN
 
 # Credits
 
-- ViRazY for the invaluable help in figuring out Linux support.
-- The [Soulsmodding community](http://soulsmodding.wikidot.com/) for the
-  [Param definitions](https://github.com/soulsmods/Paramdex) and the
-  Cheat Engine table maintained by Pav.
-- Pav, wasted, jamesq7 for technical help in figuring things out.
-- [curiouspeanut](https://twitch.tv/curiouspeanut), [Weider96](https://twitch.tv/weider96),
-  [Siegbruh](https://twitch.tv/siegbruh), [catalystz](https://twitch.tv/catalystz),
-  [danisangb](https://twitch.tv/danisangb), [GiantCookieJar](https://twitch.tv/GiantCookieJar),
-  [Ahady](https://twitch.tv/ahady), [Gin](https://twitch.tv/g1nnz),
-  [Nemz38](https://twitch.tv/nemz38), [Noobest](https://twitch.tv/noobest),
-  for beta testing the tool.
-- The font used in the UI is [Comic Mono](https://github.com/dtinth/comic-mono-font).
+- Andrea Venuta [for the original tool](https://github.com/veeenu/eldenring-practice-tool).
 
