@@ -46,6 +46,8 @@ impl Feature {
             },
             Feature {
                 flags: Some(vec!["no_goods_consume".to_string(), "no_arrows_consume".to_string()]),
+                default: true,
+                visible: true,
                 ..Feature::default()
             },
             Feature {
