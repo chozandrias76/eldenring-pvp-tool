@@ -10,8 +10,8 @@ members = [
 ]
 
 [workspace.package]
-version = "1.9.1"
-authors = ["Andrea Venuta <venutawebdesign@gmail.com>"]
+version = "0.1.0"
+authors = ["Colin Swenson-Healey <chozandrias76@github.com>"]
 
 [profile.release]
 strip = "symbols"

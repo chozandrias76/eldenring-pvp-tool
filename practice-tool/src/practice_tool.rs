@@ -322,7 +322,14 @@ impl PracticeTool {
             })
             .build(|| {
                 let user_name = whoami::username();
-                ui.text(format!("{}'s ER Invasion Tool", user_name));
+                let application_title = format!(
+                    "{user_name}'s ER Invasion Tool v{major}.{minor}.{patch}",
+                    user_name = user_name,
+                    major = MAJOR,
+                    minor = MINOR,
+                    patch = PATCH
+                );
+                ui.text(application_title);
 
                 // ui.same_line();
 
@@ -434,12 +441,15 @@ impl PracticeTool {
                     .title_bar(false)
                     .build(|| {
                         self.pointers.cursor_show.set(true);
-                        ui.text(formatcp!(
-                            "Elden Ring Practice Tool v{major}.{minor}.{patch}",
+                        let user_name = whoami::username();
+                        let application_title = format!(
+                            "{user_name}'s ER Invasion Tool v{major}.{minor}.{patch}",
+                            user_name = user_name,
                             major = MAJOR,
                             minor = MINOR,
                             patch = PATCH
-                        ));
+                        );
+                        ui.text(application_title);
                         ui.separator();
                         ui.text(format!(
                             "You can toggle flags or launch commands by\nclicking in the UI or by \
@@ -761,6 +771,14 @@ impl ImguiRenderLoop for PracticeTool {
     }
 
     fn render(&mut self, ui: &mut imgui::Ui) {
+        let user_name = whoami::username();
+        let application_title = format!(
+            "{user_name}'s ER Invasion Tool v{major}.{minor}.{patch}",
+            user_name = user_name,
+            major = MAJOR,
+            minor = MINOR,
+            patch = PATCH
+        );
         let font_token = self.set_font(ui);
         use imgui::{ImColor32, StyleColor};
         const WINDOW_BACKGROUND: [f32; 4] = [0.1, 0.1, 0.1, 0.9]; // Dark gray with slight transparency
