@@ -1,5 +1,4 @@
 pub mod feature;
-pub mod group;
 
 use hudhook::tracing::error;
 use libeldenring::prelude::*;
