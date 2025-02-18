@@ -280,7 +280,7 @@ impl PracticeTool {
                     w.render(ui);
                 }
 
-                if ui.button_with_size("Close", [BUTTON_WIDTH * scaling_factor(ui), BUTTON_HEIGHT])
+                if ui.button_with_size(format!("Close ({})", self.settings.display), [BUTTON_WIDTH * scaling_factor(ui), BUTTON_HEIGHT])
                 {
                     self.ui_state = UiState::Closed;
                     self.pointers.cursor_show.set(false);
