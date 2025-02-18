@@ -138,7 +138,7 @@ impl PracticeTool {
         let log_file = util::get_dll_path()
             .map(|mut path| {
                 path.pop();
-                path.push("jdsd_er_practice_tool.log");
+                path.push("er_invader_tool.log");
                 path
             })
             .map(std::fs::File::create);
