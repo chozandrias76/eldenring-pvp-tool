@@ -1,12 +1,7 @@
-use super::cfg_command::feature::Feature;
 use super::cfg_command::CfgCommand;
 use super::radial_menu::RadialMenu;
 use super::Settings;
-use hudhook::tracing::metadata::LevelFilter;
-use super::indicator::Indicator;
-use super::level_filter_serde::LevelFilterSerde;
 use libeldenring::prelude::*;
-use practice_tool_core::controller::ControllerCombination;
 use practice_tool_core::widgets::Widget;
 use serde::Deserialize;
 
