@@ -87,7 +87,7 @@ features = [
   { flag = "no_stamina_consume", visible = false, default = false },
   { flags = ["no_fp_consume", "no_ashes_of_war_fp_consume"], visible = false, default = false },
   { flags = ["no_goods_consume", "no_arrows_consume"], visible = true, default = false },
-  { flag = "deathcam", visible = true, default = false },
+  { flag = "deathcam", visible = false, default = false },
   { flag = "no_dead", visible = false, default = false },
   { flag = "one_shot", visible = false, default = false },
   { flag = "runearc", visible = true, default = false },

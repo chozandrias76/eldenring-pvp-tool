@@ -50,6 +50,7 @@ impl Feature {
             },
             Feature {
                 flag: Some("deathcam".to_string()),
+                visible: false,
                 ..Feature::default()
             },
             Feature {

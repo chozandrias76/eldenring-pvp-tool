@@ -116,7 +116,6 @@ impl PracticeTool {
 
             let config_content = std::fs::read_to_string(config_path)
                 .map_err(|e| format!("Couldn't read config file: {}", e))?;
-            println!("{}", config_content);
             Config::parse(&config_content).map_err(String::from)
         }
 
@@ -222,8 +221,9 @@ impl PracticeTool {
         let settings = config.settings.clone();
         let radial_menu = config.radial_menu.clone();
         let widgets = config.make_commands(&pointers);
-        info!("Practice tool initialized");
-        return PracticeTool {
+        println!("Practice Tool Initialized");
+
+        PracticeTool {
             settings,
             pointers,
             version_label,
@@ -249,7 +249,7 @@ impl PracticeTool {
             radial_menu_open_time: Instant::now(),
             press_queue: Vec::new(),
             release_queue: Vec::new(),
-        };
+        }
     }
 
     fn render_visible(&mut self, ui: &imgui::Ui) {

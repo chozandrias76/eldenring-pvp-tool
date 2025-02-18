@@ -1,7 +1,7 @@
 use libeldenring::prelude::*;
 use serde::Deserialize;
 
-#[derive(Deserialize)]
+#[derive(Deserialize, Clone)]
 #[serde(try_from = "String")]
 pub struct FlagSpec {
     pub label: String,
