@@ -253,14 +253,13 @@ impl PracticeTool {
     }
 
     fn render_visible(&mut self, ui: &imgui::Ui) {
-        let [dw, dh] = { ui.io().display_size };
+        let [w, h] = ui.io().display_size;
+
         ui.window("##tool_window")
-            .position([16., 16.], Condition::Always)
-            .size_constraints([240., 0.], [dw - 70., dh - 70.])
-            .bg_alpha(0.8)
+            .position([w * 35. / 1920., h * 140. / 1080.], Condition::Always)
+            .bg_alpha(0.625)
             .flags({
                 WindowFlags::NO_TITLE_BAR
-                    | WindowFlags::NO_RESIZE
                     | WindowFlags::NO_MOVE
                     | WindowFlags::ALWAYS_AUTO_RESIZE
             })
@@ -837,17 +836,17 @@ impl ImguiRenderLoop for PracticeTool {
         self.fonts = Some(FontIDs {
             small: fonts.add_font(&[FontSource::TtfData {
                 data: dyslexic_font_data,
-                size_pixels: 16.,
+                size_pixels: 32.,
                 config: None,
             }]),
             normal: fonts.add_font(&[FontSource::TtfData {
                 data: dyslexic_font_data,
-                size_pixels: 20.,
+                size_pixels: 38.,
                 config: None,
             }]),
             big: fonts.add_font(&[FontSource::TtfData {
                 data: dyslexic_font_data,
-                size_pixels: 28.,
+                size_pixels: 46.,
                 config: None,
             }]),
         });

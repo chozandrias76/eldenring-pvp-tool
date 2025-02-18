@@ -28,7 +28,7 @@ impl Indicator {
             Indicator { indicator: IndicatorType::Position, default: false, visible: false },
             Indicator { indicator: IndicatorType::PositionChange, default: false, visible: false },
             Indicator { indicator: IndicatorType::Animation, default: false, visible: false },
-            Indicator { indicator: IndicatorType::Fps, default: false, visible: true },
+            Indicator { indicator: IndicatorType::Fps, default: false, visible: false },
             Indicator { indicator: IndicatorType::FrameCount, default: false, visible: true },
             Indicator { indicator: IndicatorType::ImguiDebug, default: false, visible: false },
         ]

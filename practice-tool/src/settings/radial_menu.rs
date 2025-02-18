@@ -10,7 +10,7 @@ pub(crate) struct RadialMenu {
 impl Default for RadialMenu {
     fn default() -> Self {
         Self {
-            key: Key::try_from("F1").unwrap(),
+            key: Key::try_from("l3+r3").unwrap(),
             label: "Radial Menu".to_string(),
         }
     }

@@ -46,12 +46,9 @@ commands = [
 
 radial-menu = [
   { key = "p", label = "Quitout" },
+  { key = "rshift+h", label = "Save position" },
   { key = "h", label = "Load position" },
   { key = "ctrl+o", label = "Load savefile" },
-  { key = "f1", label = "AI Disable" },
-  { key = "1", label = "No Damage" },
-  { key = "ctrl+n", label = "Target Info" },
-  { key = "rshift+h", label = "Save position" },
 ]
 
 [settings]
@@ -67,7 +64,7 @@ indicators = [
   { indicator = "position", default = false, visible = true },
   { indicator = "position_change", default = false, visible = false },
   { indicator = "animation", default = false, visible = false },
-  { indicator = "fps", default = true, visible = true },
+  { indicator = "fps", default = false, visible = false },
   { indicator = "framecount", default = false, visible = false },
   { indicator = "imgui_debug", default = false, visible = false }
 ]
