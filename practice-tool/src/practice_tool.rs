@@ -416,22 +416,24 @@ impl PracticeTool {
                     Update::Available { .. } => {
                         ui.same_line();
 
-                        let green = [0.1, 0.7, 0.1, 1.0];
-                        let _token = ui.push_style_color(StyleColor::Button, green);
+                        let green = [0.0, 0.7, 0.1, 0.2];
+                        let token = ui.push_style_color(StyleColor::Button, green);
 
                         if ui.small_button("Update") {
                             ui.open_popup("##update");
                         }
+                        token.pop();
                     },
                     Update::Error(_) => {
                         ui.same_line();
 
-                        let red = [1.0, 0.0, 0.0, 1.0];
-                        let _token = ui.push_style_color(StyleColor::Button, red);
+                        let red = [1.0, 0.0, 0.0, 0.2];
+                        let token = ui.push_style_color(StyleColor::Button, red);
 
                         if ui.small_button("Update") {
                             ui.open_popup("##update");
                         }
+                        token.pop();
                     },
                 }
 
