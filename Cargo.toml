@@ -60,3 +60,4 @@ imgui-sys = { git = "https://github.com/imgui-rs/imgui-rs", rev = "1d06e2c049352
 # practice-tool-tasks = { path = "../practice-tool-core/tasks" }
 [er_invasion_tool]
 config_file_name="er_invasion_tool.toml"
+repository = "https://github.com/chozandrias76/eldenring-pvp-tool"

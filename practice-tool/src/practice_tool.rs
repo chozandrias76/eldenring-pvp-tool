@@ -84,7 +84,7 @@ pub(crate) struct PracticeTool {
     release_queue: Vec<imgui::Key>,
 }
 
-pub static RUNTIME_CONFIG_FILENAME: OnceLock<String> = OnceLock::new();
+pub static RUNTIME_CONFIG_FILENAME: OnceLock<Value> = OnceLock::new();
 
 impl PracticeTool {
     pub(crate) fn new() -> Self {
@@ -93,11 +93,13 @@ impl PracticeTool {
         let config_content = include_str!("../../Cargo.toml");
         let config: Value = config_content.parse::<Value>().expect("Failed to parse Cargo.toml");
         let invasion_tool_config = config.get("er_invasion_tool").expect("er_invasion_tool section expected in Cargo.toml.");
+        RUNTIME_CONFIG_FILENAME.set(invasion_tool_config.clone()).expect("Failed to set runtime config filename");
         let runtime_config_filename = invasion_tool_config.get("config_file_name").and_then(Value::as_str).unwrap_or("er_invasion_tool.toml");
-        RUNTIME_CONFIG_FILENAME.set(runtime_config_filename.to_string()).expect("Failed to set runtime config filename");
 
         fn load_config() -> Result<Config, String> {
-                let runtime_config_filename = RUNTIME_CONFIG_FILENAME.get().expect("Unable to get runtime config filename");
+                let invasion_tool_config = RUNTIME_CONFIG_FILENAME.get().expect("Unable to get runtime config filename");
+                let runtime_config_filename = invasion_tool_config.get("config_file_name").and_then(Value::as_str).unwrap_or("er_invasion_tool.toml");
+
                 let config_path = crate::util::get_dll_path()
                 .map(|mut path| {
                     path.pop();
@@ -298,6 +300,9 @@ impl PracticeTool {
     }
 
     fn render_closed(&mut self, ui: &imgui::Ui) {
+        let invasion_tool_config = RUNTIME_CONFIG_FILENAME.get().expect("Unable to get runtime config filename");
+        let repository = invasion_tool_config.get("repository").and_then(Value::as_str).unwrap_or("er_invasion_tool.toml");
+
         let [w, h] = ui.io().display_size;
 
         let stack_tokens = vec![
@@ -321,7 +326,7 @@ impl PracticeTool {
 
                 // ui.same_line();
 
-                if ui.small_button("Open") {
+                if ui.small_button(format!("Open ({})", self.settings.display)) {
                     self.ui_state = UiState::MenuOpen;
                 }
 
@@ -443,21 +448,11 @@ impl PracticeTool {
                              text editor."
                         ));
                         ui.separator();
-                        ui.text("-- johndisandonato");
-                        ui.text("   https://twitch.tv/johndisandonato");
-                        if ui.is_item_clicked() {
-                            open::that("https://twitch.tv/johndisandonato").ok();
-                        }
-                        ui.separator();
                         if ui.button("Submit issue") {
                             open::that(
-                                "https://github.com/veeenu/eldenring-practice-tool/issues/new",
+                                format!("{}/issues/new", repository),
                             )
                             .ok();
-                        }
-                        ui.same_line();
-                        if ui.button("Support") {
-                            open::that("https://patreon.com/johndisandonato").ok();
                         }
                         ui.same_line();
                         if ui.button("Close") {

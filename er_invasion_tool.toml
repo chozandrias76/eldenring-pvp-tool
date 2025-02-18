@@ -53,8 +53,8 @@ radial-menu = [
 
 [settings]
 log_level = "INFO"
-display = "0"
-hide = "rshift+0"
+display = "f2"
+hide = "rshift+f2"
 dxgi_debug = false
 show_console = true
 radial_menu_open = "l3+r3"

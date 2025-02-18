@@ -40,17 +40,7 @@ impl Config {
 impl Default for Config {
     fn default() -> Self {
         Config {
-            settings: Settings {
-                log_level: LevelFilterSerde(LevelFilter::DEBUG),
-                display: "0".parse().unwrap(),
-                hide: "rshift+0".parse().ok(),
-                dxgi_debug: false,
-                show_console: false,
-                indicators: Indicator::default_set(),
-                features: Feature::default_set(),
-                disable_update_prompt: false,
-                radial_menu_open: ControllerCombination::try_from("l3+r3").ok(),
-            },
+            settings: Settings::default(),
             radial_menu: Vec::new(),
             commands: Vec::new(),
         }

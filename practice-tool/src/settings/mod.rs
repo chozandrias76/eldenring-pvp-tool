@@ -35,14 +35,14 @@ impl Default for Settings {
     fn default() -> Self {
         Self {
             log_level: LevelFilterSerde::default(),
-            display: Key::try_from("F1").unwrap(),
-            hide: None,
+            display: Key::try_from("F2").unwrap(),
+            hide: "rshift+f2".parse().ok(),
             dxgi_debug: false,
             show_console: false,
             disable_update_prompt: false,
             indicators: Indicator::default_set(),
             features: Feature::default_set(),
-            radial_menu_open: None,
+            radial_menu_open: ControllerCombination::try_from("l3+r3").ok(),
         }
     }
 }
