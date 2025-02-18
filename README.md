@@ -1,4 +1,4 @@
-# Elden Ring Practice Tool
+# Elden Ring Invasion Tool
 
 [![build](https://github.com/chozandrias76/eldenring-pvp-tool/actions/workflows/build.yml/badge.svg)](https://github.com/chozandrias76/eldenring-pvp-tool/actions)
 [![GitHub all releases](https://img.shields.io/github/downloads/chozandrias76/eldenring-pvp-tool/total)](https://github.com/chozandrias76/eldenring-pvp-tool/releases/latest)
