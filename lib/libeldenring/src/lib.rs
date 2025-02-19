@@ -30,17 +30,17 @@ pub fn wait_option<T, F: FnMut() -> Option<T>>(mut f: F) -> T {
 /// Wait for an option value to be valid. Repeatedly calls the provided
 /// function, sleeping 500 ms in between calls, until it returns `Some(T)`. The
 /// waiting happens in a separate thread.
-pub fn wait_option_thread<
+pub fn wait_for_option_in_thread<
     T,
-    F: 'static + Send + FnMut() -> Option<T>,
-    G: 'static + Send + FnMut(T),
+    OptionFn: 'static + Send + FnMut() -> Option<T>,
+    CallbackFn: 'static + Send + FnMut(T),
 >(
-    mut f: F,
-    mut g: G,
+    mut option_fn: OptionFn,
+    mut callback_fn: CallbackFn,
 ) {
     thread::spawn(move || loop {
-        if let Some(t) = f() {
-            g(t);
+        if let Some(value) = option_fn() {
+            callback_fn(value);
             break;
         }
         thread::sleep(std::time::Duration::from_millis(500));
