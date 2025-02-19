@@ -71,7 +71,7 @@ pub fn check_version() -> Result<Version, (u32, u32, u32)> {
 }
 
 pub fn get_version() -> Version {
-    VERSION.get().copied().expect("Game version not found")
+    VERSION.get().copied().unwrap_or(Version::V2_06_0)
 }
 
 fn error_messagebox((major, minor, patch): (u32, u32, u32)) {
