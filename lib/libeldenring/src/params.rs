@@ -14,6 +14,8 @@ pub use crate::codegen::param_data::*;
 use crate::prelude::base_addresses::BaseAddresses;
 use crate::prelude::*;
 use crate::{pointer_chain, version};
+// TODO: Rename to have a more descriptive name
+const SHARED_POINTER_OFFSET: isize = 0x40;
 
 pub static PARAMS: Lazy<RwLock<Params>> = Lazy::new(|| unsafe {
     let mut params = Params::new();
@@ -200,7 +202,7 @@ impl Params {
     pub unsafe fn iter_param_ids(&self, s: &str) -> Option<impl Iterator<Item = u64>> {
         let (param_ptr, count) = self.get_param_ptr(s)?;
 
-        let vec_ptr = param_ptr.offset(0x40) as *const ParamEntryOffset;
+        let vec_ptr = param_ptr.offset(SHARED_POINTER_OFFSET) as *const ParamEntryOffset;
         let param_entries = std::slice::from_raw_parts(vec_ptr, count as usize);
 
         Some(param_entries.iter().map(|ent| ent.param_id))
@@ -217,7 +219,7 @@ impl Params {
     pub unsafe fn iter_param<T: 'static>(&self, s: &str) -> Option<impl Iterator<Item = Param<T>>> {
         let (param_ptr, count) = self.get_param_ptr(s)?;
 
-        let vec_ptr = param_ptr.offset(0x40) as *const ParamEntryOffset;
+        let vec_ptr = param_ptr.offset(SHARED_POINTER_OFFSET) as *const ParamEntryOffset;
         let param_entries = std::slice::from_raw_parts(vec_ptr, count as usize);
 
         Some(param_entries.iter().map(move |ent| Param {
@@ -238,7 +240,7 @@ impl Params {
             return None;
         }
 
-        let vec_ptr = param_ptr.offset(0x40) as *const ParamEntryOffset;
+        let vec_ptr = param_ptr.offset(SHARED_POINTER_OFFSET) as *const ParamEntryOffset;
         let param_entries = std::slice::from_raw_parts(vec_ptr, count as usize);
 
         Some(param_ptr.offset(param_entries[i].param_offset))
@@ -257,7 +259,7 @@ impl Params {
             return None;
         }
 
-        let vec_ptr = param_ptr.offset(0x40) as *const ParamEntryOffset;
+        let vec_ptr = param_ptr.offset(SHARED_POINTER_OFFSET) as *const ParamEntryOffset;
         let param_entries = std::slice::from_raw_parts(vec_ptr, count as usize);
 
         Some(Param {
