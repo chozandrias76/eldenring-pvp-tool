@@ -13,7 +13,7 @@ pub mod prelude {
     pub use crate::params::*;
     pub use crate::pointers::*;
     pub use crate::version::*;
-    pub use crate::{wait_option, wait_option_thread, ParamStruct, ParamVisitor};
+    pub use crate::{wait_option, wait_for_option_in_thread, ParamStruct, ParamVisitor};
 }
 
 /// Wait for an option value to be valid. Repeatedly calls the provided

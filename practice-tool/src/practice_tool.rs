@@ -193,7 +193,7 @@ impl PracticeTool {
             }
             thread::sleep(poll_interval);
         }
-        wait_option_thread(
+        wait_for_option_in_thread(
             || unsafe {
                 let mut params = PARAMS.write();
                 if let Err(e) = params.refresh() {
