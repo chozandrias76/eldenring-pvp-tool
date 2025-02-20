@@ -26,8 +26,6 @@ pub(crate) struct Settings {
     pub(crate) disable_update_prompt: bool,
     #[serde(default = "Indicator::default_set")]
     pub(crate) indicators: Vec<Indicator>,
-    #[serde(default = "Feature::default_set")]
-    pub(crate) features: Vec<Feature>,
     pub(crate) radial_menu_open: Option<ControllerCombination>,
 }
 
@@ -41,7 +39,6 @@ impl Default for Settings {
             show_console: false,
             disable_update_prompt: false,
             indicators: Indicator::default_set(),
-            features: Feature::default_set(),
             radial_menu_open: ControllerCombination::try_from("l3+r3").ok(),
         }
     }

@@ -1,5 +1,6 @@
 pub mod feature;
 
+use feature::Feature;
 use hudhook::tracing::error;
 use libeldenring::prelude::*;
 use practice_tool_core::key::Key;
@@ -35,72 +36,88 @@ pub enum CfgCommand {
     SavefileManager {
         #[serde(rename = "savefile_manager")]
         hotkey_load: PlaceholderOption<Key>,
+        feature: Feature,
     },
     ItemSpawner {
         #[serde(rename = "item_spawner")]
         hotkey_load: PlaceholderOption<Key>,
+        feature: Feature,
     },
     Flag {
         flag: FlagSpec,
         hotkey: Option<Key>,
+        feature: Feature,
     },
     MultiFlag {
         flag: MultiFlagSpec,
         hotkey: Option<Key>,
+        feature: Feature,
     },
     SpecialFlag {
         flag: String,
         hotkey: Option<Key>,
+        feature: Feature,
     },
     MultiFlagUser {
         flags: Vec<FlagSpec>,
         hotkey: Option<Key>,
         label: String,
+        feature: Feature,
     },
     Label {
         #[serde(rename = "label")]
         label: String,
+        feature: Feature,
     },
     Position {
         position: PlaceholderOption<Key>,
         save: Option<Key>,
+        feature: Feature,
     },
     NudgePosition {
         nudge: f32,
         nudge_up: Option<Key>,
         nudge_down: Option<Key>,
+        feature: Feature,
     },
     CycleSpeed {
         #[serde(rename = "cycle_speed")]
         cycle_speed: Vec<f32>,
         hotkey: Option<Key>,
+        feature: Feature,
     },
     CycleColor {
         #[serde(rename = "cycle_color")]
         cycle_color: Vec<i32>,
         hotkey: Option<Key>,
+        feature: Feature,
     },
     CharacterStats {
         #[serde(rename = "character_stats")]
         hotkey_open: PlaceholderOption<Key>,
+        feature: Feature,
     },
     Runes {
         #[serde(rename = "runes")]
         amount: u32,
         hotkey: Option<Key>,
+        feature: Feature,
     },
     Target {
         #[serde(rename = "target")]
         hotkey: PlaceholderOption<Key>,
+        feature: Feature,
     },
     Warp {
         #[serde(rename = "warp")]
         _warp: bool,
+        feature: Feature,
     },
     Group {
         #[serde(rename = "group")]
         label: String,
         commands: Vec<CfgCommand>,
+        feature: Feature,
     },
     Quitout {
         #[serde(rename = "quitout")]
@@ -112,46 +129,24 @@ impl CfgCommand {
     pub fn into_widget(self, settings: &Settings, chains: &Pointers) -> Option<Box<dyn Widget>> {
         let mut exit = false;
         let widget = match self {
-            CfgCommand::Flag { flag, hotkey } => {
-                if let Some(skip_widget) = skipped_widget(
-                    settings.features.clone(),
-                    &mut exit,
-                    &Flag::FlagSpecFlag(flag.clone()),
-                ) {
-                    return skip_widget;
+            CfgCommand::Flag { flag, hotkey, feature } => {
+                if !feature.visible {
+                    return Some(Box::new(NoneWidget {}));
                 }
                 flag_widget(&flag.label, (flag.getter)(chains).clone(), hotkey)
             },
-            CfgCommand::MultiFlag { flag, hotkey } => {
-                // return Some(Box::new(NoneWidget {}));
+            CfgCommand::MultiFlag { flag, hotkey, feature } => {
+                if !feature.visible {
+                    return Some(Box::new(NoneWidget {}));
+                }
                 multi_flag(
                     &flag.label,
                     flag.items.iter().map(|flag| flag(chains).clone()).collect(),
                     hotkey,
                 )
             },
-            CfgCommand::MultiFlagUser { flags, hotkey, label } => {
-                settings.features.iter().filter(|feature| !feature.visible).for_each(|feature| {
-                    if !exit {
-                        if let Some(feature_flags) = feature.flags.as_ref() {
-                            let feature_flags_into_names: Vec<String> = feature_flags
-                                .iter()
-                                .map(|flag| FlagSpec::try_from(flag.clone()).unwrap().label)
-                                .collect();
-                            let command_flags = flags
-                                .iter()
-                                .map(|flag: &FlagSpec| flag.label.clone())
-                                .collect::<Vec<String>>();
-                            let mut sorted_command_flags = command_flags.clone();
-                            sorted_command_flags.sort();
-                            let mut sorted_feature_flags = feature_flags_into_names.clone();
-                            sorted_feature_flags.sort();
-
-                            exit = sorted_command_flags == sorted_feature_flags;
-                        }
-                    }
-                });
-                if exit {
+            CfgCommand::MultiFlagUser { flags, hotkey, label, feature } => {
+                if !feature.visible {
                     return Some(Box::new(NoneWidget {}));
                 }
                 multi_flag(
@@ -160,15 +155,11 @@ impl CfgCommand {
                     hotkey,
                 )
             },
-            CfgCommand::SpecialFlag { flag: special_flag, hotkey }
+            CfgCommand::SpecialFlag { flag: special_flag, hotkey, feature }
                 if special_flag == "deathcam" =>
             {
-                if let Some(skip_widget) = skipped_widget(
-                    settings.features.clone(),
-                    &mut exit,
-                    &Flag::StringFlag(special_flag),
-                ) {
-                    return skip_widget;
+                if !feature.visible {
+                    return Some(Box::new(NoneWidget {}));
                 }
                 deathcam(
                     chains.deathcam.0.clone(),
@@ -177,15 +168,11 @@ impl CfgCommand {
                     hotkey,
                 )
             },
-            CfgCommand::SpecialFlag { flag: special_flag, hotkey }
+            CfgCommand::SpecialFlag { flag: special_flag, hotkey, feature }
                 if special_flag == "action_freeze" =>
             {
-                if let Some(skip_widget) = skipped_widget(
-                    settings.features.clone(),
-                    &mut exit,
-                    &Flag::StringFlag(special_flag),
-                ) {
-                    return skip_widget;
+                if !feature.visible {
+                    return Some(Box::new(NoneWidget {}));
                 }
                 action_freeze(
                     chains.func_dbg_action_force.clone(),
@@ -193,25 +180,33 @@ impl CfgCommand {
                     hotkey,
                 )
             },
-            CfgCommand::SpecialFlag { flag: special_flag, hotkey: _ } => {
+            CfgCommand::SpecialFlag { flag: special_flag, hotkey: _, feature: _ } => {
                 error!("Invalid flag {}", special_flag);
                 return None;
             },
-            CfgCommand::Label { label } => label_widget(label.as_str()),
-            CfgCommand::SavefileManager { hotkey_load } => {
+            CfgCommand::Label { label, feature: _ } => label_widget(label.as_str()),
+            CfgCommand::SavefileManager { hotkey_load, feature } => {
+                if !feature.visible {
+                    return Some(Box::new(NoneWidget {}));
+                }
                 savefile_manager(hotkey_load.into_option(), settings.display)
             },
-            CfgCommand::ItemSpawner { hotkey_load } => Box::new(ItemSpawner::new(
-                chains.func_item_inject,
-                chains.base_addresses.map_item_man,
-                chains.gravity.clone(),
-                hotkey_load.into_option(),
-                settings.display,
-            )),
-            CfgCommand::Position { position, save } => {
-                // if let Some(skip_widget) = skipped_group_widget(settings.features.clone(),
-                // exit, &label) {     return skip_widget;
-                // }
+            CfgCommand::ItemSpawner { hotkey_load, feature } => {
+                if !feature.visible {
+                    return Some(Box::new(NoneWidget {}));
+                }
+                Box::new(ItemSpawner::new(
+                    chains.func_item_inject,
+                    chains.base_addresses.map_item_man,
+                    chains.gravity.clone(),
+                    hotkey_load.into_option(),
+                    settings.display,
+                ))
+            },
+            CfgCommand::Position { position, save, feature } => {
+                if !feature.visible {
+                    return Some(Box::new(NoneWidget {}));
+                }
                 save_position(
                     chains.global_position.clone(),
                     chains.chunk_position.clone(),
@@ -220,16 +215,23 @@ impl CfgCommand {
                     save,
                 )
             },
-            CfgCommand::NudgePosition { nudge, nudge_up, nudge_down } => nudge_position(
-                chains.global_position.clone(),
-                chains.chunk_position.clone(),
-                chains.torrent_chunk_position.clone(),
-                nudge,
-                nudge_up,
-                nudge_down,
-            ),
-            CfgCommand::CycleSpeed { cycle_speed: values, hotkey } => {
-                return Some(Box::new(NoneWidget {}));
+            CfgCommand::NudgePosition { nudge, nudge_up, nudge_down, feature } => {
+                if !feature.visible {
+                    return Some(Box::new(NoneWidget {}));
+                }
+                nudge_position(
+                    chains.global_position.clone(),
+                    chains.chunk_position.clone(),
+                    chains.torrent_chunk_position.clone(),
+                    nudge,
+                    nudge_up,
+                    nudge_down,
+                )
+            },
+            CfgCommand::CycleSpeed { cycle_speed: values, hotkey , feature} => {
+                if !feature.visible {
+                    return Some(Box::new(NoneWidget {}))
+                }
 
                 cycle_speed(
                     values.as_slice(),
@@ -237,12 +239,16 @@ impl CfgCommand {
                     hotkey,
                 )
             },
-            CfgCommand::CycleColor { cycle_color: values, hotkey } => {
-                return Some(Box::new(NoneWidget {}));
+            CfgCommand::CycleColor { cycle_color: values, hotkey , feature} => {
+                if !feature.visible {
+                    return Some(Box::new(NoneWidget {}))
+                }
                 cycle_color(values.as_slice(), chains.mesh_color.clone(), hotkey)
             },
-            CfgCommand::CharacterStats { hotkey_open } => {
-                return Some(Box::new(NoneWidget {}));
+            CfgCommand::CharacterStats { hotkey_open , feature} => {
+                if !feature.visible {
+                    return Some(Box::new(NoneWidget {}))
+                }
                 character_stats_edit(
                     chains.character_stats.clone(),
                     chains.character_points.clone(),
@@ -251,12 +257,16 @@ impl CfgCommand {
                     settings.display,
                 )
             },
-            CfgCommand::Runes { amount, hotkey } => {
-                return Some(Box::new(NoneWidget {}));
+            CfgCommand::Runes { amount, hotkey , feature} => {
+                if !feature.visible {
+                    return Some(Box::new(NoneWidget {}))
+                }
                 runes(amount, chains.runes.clone(), hotkey)
             },
-            CfgCommand::Warp { .. } => {
-                return Some(Box::new(NoneWidget {}));
+            CfgCommand::Warp { feature,.. } => {
+                if !feature.visible {
+                    return Some(Box::new(NoneWidget {}))
+                }
                 Box::new(Warp::new(
                     chains.func_warp,
                     chains.warp1.clone(),
@@ -264,8 +274,10 @@ impl CfgCommand {
                     settings.display,
                 ))
             },
-            CfgCommand::Target { hotkey } => {
-                return Some(Box::new(NoneWidget {}));
+            CfgCommand::Target { hotkey, feature } => {
+                if !feature.visible {
+                    return Some(Box::new(NoneWidget {}))
+                }
                 Box::new(Target::new(
                     chains.current_target.clone(),
                     chains.chunk_position.clone(),
@@ -273,11 +285,9 @@ impl CfgCommand {
                 ))
             },
             CfgCommand::Quitout { hotkey } => quitout(chains.quitout.clone(), hotkey.into_option()),
-            CfgCommand::Group { label, commands } => {
-                if let Some(skip_widget) =
-                    skipped_group_widget(settings.features.clone(), exit, &label)
-                {
-                    return skip_widget;
+            CfgCommand::Group { label, commands , feature} => {
+                if !feature.visible {
+                    return Some(Box::new(NoneWidget {}))
                 }
                 group(
                     label.as_str(),
@@ -289,69 +299,6 @@ impl CfgCommand {
 
         Some(widget)
     }
-}
-
-fn skipped_group_widget(
-    features: Vec<feature::Feature>,
-    mut exit: bool,
-    label: &String,
-) -> Option<Option<Box<dyn Widget>>> {
-    features.iter().filter(|feature| !feature.visible).for_each(|feature| {
-        if !exit {
-            if let Some(feature_group) = feature.group.as_ref() {
-                exit = feature_group == label;
-            }
-        }
-    });
-
-    if exit {
-        return Some(Some(Box::new(NoneWidget {})));
-    }
-    None
-}
-
-enum Flag {
-    StringFlag(String),
-    FlagSpecFlag(FlagSpec),
-}
-
-fn skipped_widget(
-    features: Vec<feature::Feature>,
-    exit: &mut bool,
-    flag: &Flag,
-) -> Option<Option<Box<dyn Widget>>> {
-    features.iter().filter(|feature| !feature.visible).for_each(|feature| {
-        if !*exit {
-            if let Some(feature_flag) = feature.flag.as_ref() {
-                if let Ok(feature_flag_spec) = FlagSpec::try_from(feature_flag.clone()) {
-                    match flag {
-                        Flag::StringFlag(string_flag) => {
-                            if let Ok(widget_flag_spec) = FlagSpec::try_from(string_flag.clone()) {
-                                *exit = feature_flag_spec.label == widget_flag_spec.label;
-                            }
-                        },
-                        Flag::FlagSpecFlag(widget_flag_spec) => {
-                            *exit = feature_flag_spec.label == widget_flag_spec.label;
-                        },
-                    }
-                } else {
-                    match flag {
-                        Flag::StringFlag(string_flag) => {
-                            *exit = feature_flag == string_flag;
-                        },
-                        Flag::FlagSpecFlag(widget_flag_spec) => {
-                           println!("Something unexpected happened when trying to skip a widget. Here's the data for widget and feature flags: {:?}, {:?}", widget_flag_spec, feature_flag);
-                        },
-                    }
-                }
-            }
-        }
-    });
-
-    if *exit {
-        return Some(Some(Box::new(NoneWidget {})));
-    }
-    None
 }
 
 #[derive(Deserialize, Debug)]
