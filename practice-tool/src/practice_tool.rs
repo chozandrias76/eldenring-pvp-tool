@@ -1,13 +1,9 @@
 use std::fmt::Write;
 use std::sync::atomic::{AtomicBool, Ordering};
 use std::sync::{Mutex, OnceLock};
-use std::thread;
 use std::time::{Duration, Instant};
-use std::fs;
-use toml::Value;
-use whoami;
+use std::thread;
 
-use const_format::formatcp;
 use hudhook::tracing::metadata::LevelFilter;
 use hudhook::tracing::*;
 use hudhook::{ImguiRenderLoop, RenderContext};
@@ -19,7 +15,9 @@ use practice_tool_core::crossbeam_channel::{self, Receiver, Sender};
 use practice_tool_core::widgets::radial_menu::radial_menu;
 use practice_tool_core::widgets::{scaling_factor, Widget, BUTTON_HEIGHT, BUTTON_WIDTH};
 use sys::ImVec2;
+use toml::Value;
 use tracing_subscriber::prelude::*;
+use whoami;
 use windows::Win32::UI::Input::XboxController::{XINPUT_GAMEPAD_A, XINPUT_GAMEPAD_B, XINPUT_STATE};
 
 use crate::settings::config::Config;
@@ -28,6 +26,8 @@ use crate::settings::radial_menu::RadialMenu;
 use crate::settings::Settings;
 use crate::update::Update;
 use crate::{util, XINPUTGETSTATE};
+// The ui textures seem to bug out with greater opacity
+const MAX_OPACITY: f32 = 1.-0.001962;
 
 const MAJOR: usize = pkg_version_major!();
 const MINOR: usize = pkg_version_minor!();
@@ -92,13 +92,24 @@ impl PracticeTool {
         log_panics::init();
         let config_content = include_str!("../../Cargo.toml");
         let config: Value = config_content.parse::<Value>().expect("Failed to parse Cargo.toml");
-        let invasion_tool_config = config.get("er_invasion_tool").expect("er_invasion_tool section expected in Cargo.toml.");
-        RUNTIME_CONFIG_FILENAME.set(invasion_tool_config.clone()).expect("Failed to set runtime config filename");
-        let runtime_config_filename = invasion_tool_config.get("config_file_name").and_then(Value::as_str).unwrap_or("er_invasion_tool.toml");
+        let invasion_tool_config = config
+            .get("er_invasion_tool")
+            .expect("er_invasion_tool section expected in Cargo.toml.");
+        RUNTIME_CONFIG_FILENAME
+            .set(invasion_tool_config.clone())
+            .expect("Failed to set runtime config filename");
+        let runtime_config_filename = invasion_tool_config
+            .get("config_file_name")
+            .and_then(Value::as_str)
+            .unwrap_or("er_invasion_tool.toml");
 
         fn load_config() -> Result<Config, String> {
-                let invasion_tool_config = RUNTIME_CONFIG_FILENAME.get().expect("Unable to get runtime config filename");
-                let runtime_config_filename = invasion_tool_config.get("config_file_name").and_then(Value::as_str).unwrap_or("er_invasion_tool.toml");
+            let invasion_tool_config =
+                RUNTIME_CONFIG_FILENAME.get().expect("Unable to get runtime config filename");
+            let runtime_config_filename = invasion_tool_config
+                .get("config_file_name")
+                .and_then(Value::as_str)
+                .unwrap_or("er_invasion_tool.toml");
 
                 let config_path = crate::util::get_dll_path()
                 .map(|mut path| {
@@ -109,12 +120,12 @@ impl PracticeTool {
                 .expect("Couldn't find config file");
 
             if !config_path.exists() {
-                let default_config_content = std::fs::read_to_string(format!("../../{}", runtime_config_filename))
+                let default_config_content =
+                    std::fs::read_to_string(format!("../../{}", runtime_config_filename))
                     .map_err(|e| format!("Couldn't read default config file: {}", e))?;
                 std::fs::write(&config_path, default_config_content)
                     .map_err(|e| format!("Couldn't write default config file: {}", e))?;
             }
-
 
             let config_content = std::fs::read_to_string(config_path)
                 .map_err(|e| format!("Couldn't read config file: {}", e))?;
@@ -261,9 +272,7 @@ impl PracticeTool {
             .position([w * 35. / 1920., h * 140. / 1080.], Condition::Always)
             .bg_alpha(0.625)
             .flags({
-                WindowFlags::NO_TITLE_BAR
-                    | WindowFlags::NO_MOVE
-                    | WindowFlags::ALWAYS_AUTO_RESIZE
+                WindowFlags::NO_TITLE_BAR | WindowFlags::NO_MOVE | WindowFlags::ALWAYS_AUTO_RESIZE
             })
             .build(|| {
                 if let Some(e) = self.config_err.as_ref() {
@@ -280,8 +289,10 @@ impl PracticeTool {
                     w.render(ui);
                 }
 
-                if ui.button_with_size(format!("Close ({})", self.settings.display), [BUTTON_WIDTH * scaling_factor(ui), BUTTON_HEIGHT])
-                {
+                if ui.button_with_size(format!("Close ({})", self.settings.display), [
+                    BUTTON_WIDTH * scaling_factor(ui),
+                    BUTTON_HEIGHT,
+                ]) {
                     self.ui_state = UiState::Closed;
                     self.pointers.cursor_show.set(false);
                 }
@@ -300,8 +311,12 @@ impl PracticeTool {
     }
 
     fn render_closed(&mut self, ui: &imgui::Ui) {
-        let invasion_tool_config = RUNTIME_CONFIG_FILENAME.get().expect("Unable to get runtime config filename");
-        let repository = invasion_tool_config.get("repository").and_then(Value::as_str).unwrap_or("er_invasion_tool.toml");
+        let invasion_tool_config =
+            RUNTIME_CONFIG_FILENAME.get().expect("Unable to get runtime config filename");
+        let repository = invasion_tool_config
+            .get("repository")
+            .and_then(Value::as_str)
+            .unwrap_or("er_invasion_tool.toml");
 
         let [w, h] = ui.io().display_size;
 
@@ -329,7 +344,10 @@ impl PracticeTool {
                     minor = MINOR,
                     patch = PATCH
                 );
+                let color: [f32; 4] = [220./255., 175./255., 45./255.,MAX_OPACITY];
+                let style = ui.push_style_color(StyleColor::Text, color);
                 ui.text(application_title);
+                style.end();
 
                 // ui.same_line();
 
@@ -352,9 +370,7 @@ impl PracticeTool {
 
                         self.pointers.cursor_show.set(true);
 
-                        ui.text(
-                            "You can toggle overlay indicators here.",
-                        );
+                        ui.text("You can toggle overlay indicators here.");
                         ui.separator();
 
                         for indicator in &mut self.settings.indicators {
@@ -456,15 +472,12 @@ impl PracticeTool {
                         ui.text(format!(
                             "You can toggle flags or launch commands by\nclicking in the UI or by \
                              pressing\nthe hotkeys (in the parentheses).\n\nYou can configure \
-                             your tool by editing\nthe er_invasion_tool.toml file with\na \
-                             text editor."
+                             your tool by editing\nthe er_invasion_tool.toml file with\na text \
+                             editor."
                         ));
                         ui.separator();
                         if ui.button("Submit issue") {
-                            open::that(
-                                format!("{}/issues/new", repository),
-                            )
-                            .ok();
+                            open::that(format!("{}/issues/new", repository)).ok();
                         }
                         ui.same_line();
                         if ui.button("Close") {
@@ -848,19 +861,20 @@ impl ImguiRenderLoop for PracticeTool {
     fn initialize(&mut self, ctx: &mut Context, _: &mut dyn RenderContext) {
         let fonts = ctx.fonts();
         let dyslexic_font_data = include_bytes!("../../lib/data/OpenDyslexicMono-Regular.otf");
+        let agmena_font_data = include_bytes!("../../lib/data/Agmena Pro Book.ttf");
         self.fonts = Some(FontIDs {
             small: fonts.add_font(&[FontSource::TtfData {
-                data: dyslexic_font_data,
+                data: agmena_font_data,
                 size_pixels: 32.,
                 config: None,
             }]),
             normal: fonts.add_font(&[FontSource::TtfData {
-                data: dyslexic_font_data,
+                data: agmena_font_data,
                 size_pixels: 38.,
                 config: None,
             }]),
             big: fonts.add_font(&[FontSource::TtfData {
-                data: dyslexic_font_data,
+                data: agmena_font_data,
                 size_pixels: 46.,
                 config: None,
             }]),
