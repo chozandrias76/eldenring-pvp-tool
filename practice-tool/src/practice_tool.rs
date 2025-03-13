@@ -8,6 +8,7 @@ use hudhook::tracing::metadata::LevelFilter;
 use hudhook::tracing::*;
 use hudhook::{ImguiRenderLoop, RenderContext};
 use imgui::*;
+use imgui::StyleColor;
 use libeldenring::prelude::*;
 use libeldenring::version;
 use pkg_version::*;
@@ -111,7 +112,7 @@ impl PracticeTool {
                 .and_then(Value::as_str)
                 .unwrap_or("er_invasion_tool.toml");
 
-                let config_path = crate::util::get_dll_path()
+            let config_path = crate::util::get_dll_path()
                 .map(|mut path| {
                     path.pop();
                     path.push(runtime_config_filename);
@@ -122,7 +123,7 @@ impl PracticeTool {
             if !config_path.exists() {
                 let default_config_content =
                     std::fs::read_to_string(format!("../../{}", runtime_config_filename))
-                    .map_err(|e| format!("Couldn't read default config file: {}", e))?;
+                        .map_err(|e| format!("Couldn't read default config file: {}", e))?;
                 std::fs::write(&config_path, default_config_content)
                     .map_err(|e| format!("Couldn't write default config file: {}", e))?;
             }
@@ -786,21 +787,11 @@ impl ImguiRenderLoop for PracticeTool {
     }
 
     fn render(&mut self, ui: &mut imgui::Ui) {
-        let user_name = whoami::username();
-        let application_title = format!(
-            "{user_name}'s ER Invasion Tool v{major}.{minor}.{patch}",
-            user_name = user_name,
-            major = MAJOR,
-            minor = MINOR,
-            patch = PATCH
-        );
         let font_token = self.set_font(ui);
-        use imgui::{ImColor32, StyleColor};
         const WINDOW_BACKGROUND: [f32; 4] = [0.1, 0.1, 0.1, 0.9]; // Dark gray with slight transparency
         const TEXT_COLOR: [f32; 4] = [1.0, 1.0, 1.0, 1.0]; // White, fully opaque
         const BUTTON_COLOR: [f32; 4] = [0.2, 0.2, 0.2, 0.8]; // Darker gray with some transparency
         const ACTIVE_BUTTON_COLOR: [f32; 4] = [0.3, 0.6, 1.0, 1.0]; // Vibrant blue, fully opaque
-
         let text_color = ui.push_style_color(StyleColor::Text, TEXT_COLOR);
         let bg_color = ui.push_style_color(StyleColor::WindowBg, WINDOW_BACKGROUND);
         let button_color = ui.push_style_color(StyleColor::Button, BUTTON_COLOR);

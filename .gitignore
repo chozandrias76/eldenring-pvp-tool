@@ -3,3 +3,4 @@
 *.pdb
 .env
 .luarc.json
+desktop.ini
